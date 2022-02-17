@@ -3,6 +3,7 @@
 
 char textbuffer[4][16];
 uint8_t display_buffer[BUFFER_SIZE];
+int btn_stat = 0;
 
 int main() {
     /*
@@ -50,10 +51,12 @@ int main() {
     display_init();
     quicksleep(100000);
     clearDisplay();
+    quicksleep(1000);
+    Initialize_IO();
 
-    game();
-
-    while (1);
+    while (1){
+        game();
+    }
 
 	return 0;
 }

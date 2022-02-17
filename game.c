@@ -20,28 +20,38 @@ uint8_t pixmap[70][2] = {{14,5},{14,6},{14,7},{26,7},{13,8},
 
 
 void game (){
-    int iters2 = 0;
-    int iters = 0;
-    char direction = 'r';
-    char direction2 = 'u';
-    int steps = 1;
-    while (1){
-        setPixels(70,2,pixmap[0]);
-        render(display_buffer);
-        quicksleep(500000 / 4);
-        clearPixels(70,2,pixmap[0]);
     
-        movePixels (steps,70,2,direction,pixmap[0]);
-        movePixels (steps, 70, 2, direction2, pixmap[0]);
-        iters++;
-        iters2++;
-        if (iters >= 90){
-            iters = 0;
-            direction = direction == 'r'?'l':'r';
-        }
-        if (iters2 >= 3){
-            iters2 = 0;
-            direction2 = direction2 == 'u'?'d':'u';
-        }
+    int btn_stat = getbtns();
+    char direction; 
+
+    switch (btn_stat)
+    {
+    case 1:
+        direction = 'd';
+        break;
+    case 2: 
+        direction = 'r';
+        break;
+    case 4:
+        direction = 'u';
+        break;
+    case 8:
+        direction = 'l';
+        break;
+    default:
+        break;
     }
+
+    int steps = 1;
+    
+    setPixels(70,2,pixmap[0]);
+    render();
+    //quicksleep();
+    clearPixels(70,2,pixmap[0]);
+
+    if (btn_stat){
+        accurate_delay (25);
+        movePixels (steps, 70, 2, direction, pixmap[0]);
+    }
+    
 }

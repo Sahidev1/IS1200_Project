@@ -123,3 +123,9 @@ time2string:
 	POP $ra # poping out the return adress for time2string so it jumps back to the caller in main
 	jr $ra # return to caller
 	nop
+
+    .global enable_interrupt
+    enable_interrupt:
+        ei
+        jr $ra
+        nop
