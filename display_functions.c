@@ -80,6 +80,7 @@ void render (){
 
 void movePixels (int steps, int array_rows, int array_columns, char direction, uint8_t* arr){
     int i;
+    int flag = 1;
     switch (direction)
     {
     case 'r':
@@ -92,12 +93,26 @@ void movePixels (int steps, int array_rows, int array_columns, char direction, u
             *(arr + i*array_columns + 1) -= steps;
         }
         break;
-    case 'u':
+    case 'd':
+        for (i = 0; i < array_rows; i++){
+            if (*(arr + i*array_columns) >= 31){
+                flag = 0;
+                break;
+            }
+        }
+        if (!flag) break;
         for (i = 0; i < array_rows; i++){
             *(arr + i*array_columns) += steps;
         }
         break;
-    case 'd':
+    case 'u':
+        for (i = 0; i < array_rows; i++){
+            if (*(arr + i*array_columns) <= 0){
+                flag = 0;
+                break;
+            }
+        }
+        if (!flag) break;
         for (i = 0; i < array_rows; i++){
             *(arr + i*array_columns) -= steps;
         }
