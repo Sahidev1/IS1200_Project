@@ -5,6 +5,9 @@ int delay_counter = 0;
 
 void user_isr(void){
     IFSCLR(0) = 0x100;
+    if (delay_counter == INT32_MAX){
+        delay_counter == 0;
+    }
     delay_counter++;
 }
 
@@ -21,6 +24,23 @@ int getsw (void){
 // reads GPIO pin 5 to 7 status
 int getbtns (void) {
     return ((PORTD & (0b111 << 5)) >> 4) | ((PORTF & 0x2) >> 1);
+}
+
+char read_direction (int btn_stat){
+    switch (btn_stat)
+    {
+    case 1:
+        return DOWN;
+    case 2: 
+        return RIGHT;
+    case 4:
+        return UP;
+    case 8:
+        return LEFT;
+    default:
+        break;
+    }
+    return 0;
 }
 
 void Initialize_IO( void )

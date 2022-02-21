@@ -1,9 +1,21 @@
 #include <pic32mx.h>
 #include "game_header.h"
+#include <stdlib.h>
+#include "graphical_objects.h"
 
 char textbuffer[4][16];
 uint8_t display_buffer[BUFFER_SIZE];
 int btn_stat = 0;
+
+
+typedef struct Gfo_state
+{
+    uint8_t *gfo_pointers[10];
+}gfo_state;
+
+void gen_obstacle (int obst_nr){
+
+}
 
 int main() {
     /*
@@ -53,10 +65,38 @@ int main() {
     clearDisplay();
     quicksleep(1000);
     Initialize_IO();
-
+    
+    int direction;
+    int steps = 1;
+    int btn_stat;
+    
+    int flag = 0;
+    reset_obst();
     while (1){
-        game();
+        btn_stat = getbtns();
+        direction = read_direction(btn_stat);
+        
+        setPixels(32,2,player[0]);
+        //setPixels(30, 2,obst0[0]);
+        setPixels(51,2,obst1_live[0]);
+
+        render();
+        //quicksleep();
+        clearPixels(32,2,player[0]);
+        //clearPixels(30, 2, obst0[0]);
+        clearPixels(51,2,obst1_live[0]);
+
+        accurate_delay (30);
+        //movePixels (1, 30, 2, 'l', obst0[0]);
+        moveObjectPixels(1,51,2,'l',obst1_live[0]);
+        if (btn_stat){
+            movePixels (steps, 32, 2, direction, player[0]);
+            movePixels (steps, 9, 2, direction, collision_sensors[0]);
+        }
+        flag = collision_check();
+        if (flag == 1) break;
     }
 
+    while(1);
 	return 0;
 }

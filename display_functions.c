@@ -1,6 +1,7 @@
 #include <pic32mx.h>
 #include <stdint.h>
 #include "game_header.h"
+#include "graphical_objects.h"
 
 #define DISPLAY_CHANGE_TO_COMMAND_MODE (PORTFCLR = 0x10)
 #define DISPLAY_CHANGE_TO_DATA_MODE (PORTFSET = 0x10)
@@ -83,17 +84,17 @@ void movePixels (int steps, int array_rows, int array_columns, char direction, u
     int flag = 1;
     switch (direction)
     {
-    case 'r':
+    case RIGHT:
         for (i = 0; i < array_rows; i++){
             *(arr + i*array_columns + 1) += steps;
         }
         break;
-    case 'l':
+    case LEFT:
         for (i = 0; i < array_rows; i++){
             *(arr + i*array_columns + 1) -= steps;
         }
         break;
-    case 'd':
+    case DOWN:
         for (i = 0; i < array_rows; i++){
             if (*(arr + i*array_columns) >= 31){
                 flag = 0;
@@ -105,7 +106,7 @@ void movePixels (int steps, int array_rows, int array_columns, char direction, u
             *(arr + i*array_columns) += steps;
         }
         break;
-    case 'u':
+    case UP:
         for (i = 0; i < array_rows; i++){
             if (*(arr + i*array_columns) <= 0){
                 flag = 0;
@@ -122,7 +123,51 @@ void movePixels (int steps, int array_rows, int array_columns, char direction, u
     }
 }
 
+
+// coordinates >= 200 invalid
+void moveObjectPixels (int steps, int array_rows, int array_columns, char direction, uint8_t* arr){
+    int i;
+    int out_of_display_flag = 1;
+    switch (direction)
+    {
+    case RIGHT:
+        for (i = 0; i < array_rows; i++){
+            *(arr + i*array_columns + 1) += steps;
+        }
+        break;
+    case LEFT:
+        for (i = 0; i < array_rows; i++){
+            if (*(arr + i*array_columns + 1) <= 180){
+                out_of_display_flag = 0;
+            }
+            if (*(arr + i*array_columns + 1) == 0){
+                *(arr + i*array_columns + 1) = 255;
+            }
+            else {
+                *(arr + i*array_columns + 1) -= steps;
+            }
+        }
+        break;
+    case DOWN:
+        for (i = 0; i < array_rows; i++){
+            *(arr + i*array_columns) += steps;
+        }
+        break;
+    case UP:
+        for (i = 0; i < array_rows; i++){
+            *(arr + i*array_columns) -= steps;
+        }
+        break;
+    default:
+        break;
+    }
+    if (out_of_display_flag){
+        reset_obst();
+    }   
+}
+
 void setPixel (int row, int column){
+    if (row >= 32 || column >= 128) return;
     int page = row / 8;
     uint8_t row_byte = ((uint8_t)row) % 8;
     int array_pos = page*128 + column;
@@ -135,6 +180,14 @@ void setPixels (int array_rows, int array_columns, uint8_t* pixelArray){
     for (i = 0; i < array_rows; i++){
         setPixel(*(pixelArray + i*array_columns),*(pixelArray + i*array_columns + 1));
     }
+}
+
+int getPixel (int row, int column){
+    int page = row / 8;
+    uint8_t row_byte = ((uint8_t)row) % 8;
+    int array_pos = page*128 + column;
+
+    return (display_buffer[array_pos] & (pow2(row_byte))) >> row_byte;
 }
 
 void clearPixel (int row, int column){

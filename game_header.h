@@ -3,6 +3,12 @@
 
 #define BUFFER_SIZE 512
 
+#define UP 'u'
+#define DOWN 'd'
+#define RIGHT 'r'
+#define LEFT 'l'
+
+
 /* Display related */
 extern char textbuffer[4][16];
 extern uint8_t display_buffer[BUFFER_SIZE];
@@ -15,6 +21,8 @@ void render ();
 
 void movePixels (int steps, int array_rows, int array_columns, char direction, uint8_t* arr);
 
+void moveObjectPixels (int steps, int array_rows, int array_columns, char direction, uint8_t* arr);
+
 void setPixel (int row, int column);
 
 void setPixels (int array_rows, int array_columns, uint8_t* pixelArray);
@@ -26,6 +34,8 @@ void clearPixels (int array_rows, int array_columns, uint8_t* pixelArray);
 void clearDisplay ();
 
 void quicksleep();
+
+
 
 /* IO/Interrupt related */
 extern int btn_stat;
@@ -40,9 +50,7 @@ void buffer_update ();
 
 void accurate_delay (int ms);
 
-
-
-
+char read_direction (int btn_stat);
 
 
 
