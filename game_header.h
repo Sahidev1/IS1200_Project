@@ -19,7 +19,7 @@ void display_init(void);
 
 void render ();
 
-void movePixels (int steps, int array_rows, char direction, uint8_t* arr);
+void movePlayerPixels (int steps, int array_rows, char direction, uint8_t* arr);
 
 void moveObjectPixels (int steps, int array_rows, char direction, uint8_t* arr);
 

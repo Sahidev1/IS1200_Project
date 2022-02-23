@@ -79,48 +79,44 @@ void render (){
     }
 }
 
-void movePixels (int steps, int array_rows, char direction, uint8_t* arr){
+void movePlayerPixels (int steps, int array_rows, char direction, uint8_t* arr){
     int array_columns = 2;
     int i;
     int flag = 1;
+    int offset;
+    int limit;
+
     switch (direction)
     {
     case RIGHT:
-        for (i = 0; i < array_rows; i++){
-            *(arr + i*array_columns + 1) += steps;
-        }
+            offset = 1;
+            limit = COLUMNS - 1;
         break;
-    case LEFT:
-        for (i = 0; i < array_rows; i++){
-            *(arr + i*array_columns + 1) -= steps;
-        }
-        break;
-    case DOWN:
-        for (i = 0; i < array_rows; i++){
-            if (*(arr + i*array_columns) >= 31){
-                flag = 0;
-                break;
-            }
-        }
-        if (!flag) break;
-        for (i = 0; i < array_rows; i++){
-            *(arr + i*array_columns) += steps;
-        }
+    case LEFT: 
+            offset = 1;
+            steps = -1 * steps;
+            limit = 0;
         break;
     case UP:
-        for (i = 0; i < array_rows; i++){
-            if (*(arr + i*array_columns) <= 0){
-                flag = 0;
-                break;
-            }
-        }
-        if (!flag) break;
-        for (i = 0; i < array_rows; i++){
-            *(arr + i*array_columns) -= steps;
-        }
+            offset = 0;
+            steps = -1 * steps;  
+            limit = 0;
+        break;
+    case DOWN:
+            offset = 0;
+            limit = ROWS - 1;
         break;
     default:
         break;
+    }
+
+    for (i = 0; i < array_rows; i++){
+        if (*(arr + i*array_columns + offset) == limit){
+            return;
+        }
+    }
+    for (i = 0; i < array_rows; i++){
+        *(arr + i*array_columns + offset) += steps;
     }
 }
 
@@ -195,6 +191,7 @@ int getPixel (int row, int column){
 }
 
 void clearPixel (int row, int column){
+    if (row >= 32 || column >= 128) return;
     int page = row / 8;
     uint8_t row_byte = ((uint8_t)row) % 8;
     int array_pos = page*128 + column;

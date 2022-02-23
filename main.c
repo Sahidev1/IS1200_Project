@@ -88,14 +88,14 @@ int main() {
         clearPixels(100, live_obj0[0]);
 
         accurate_delay (30);
-        //movePixels (1, 30, 2, 'l', obst0[0]);
+        //movePlayerPixels (1, 30, 2, 'l', obst0[0]);
         moveObjectPixels(1,100,LEFT,live_obj0[0]);
         if (btn_stat){
-            movePixels (steps, 32, direction, player[0]);
-            movePixels (steps, 9, direction, collision_sensors[0]);
+            movePlayerPixels (steps, 32, direction, player[0]);
+            movePlayerPixels (steps, 9, direction, collision_sensors[0]);
         }
         flag = collision_check();
-        if (flag == 1) break;
+        //if (flag == 1) break;
     }
 
     while(1);
