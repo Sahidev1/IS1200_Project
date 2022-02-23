@@ -79,7 +79,8 @@ void render (){
     }
 }
 
-void movePixels (int steps, int array_rows, int array_columns, char direction, uint8_t* arr){
+void movePixels (int steps, int array_rows, char direction, uint8_t* arr){
+    int array_columns = 2;
     int i;
     int flag = 1;
     switch (direction)
@@ -125,7 +126,8 @@ void movePixels (int steps, int array_rows, int array_columns, char direction, u
 
 
 // coordinates >= 200 invalid
-void moveObjectPixels (int steps, int array_rows, int array_columns, char direction, uint8_t* arr){
+void moveObjectPixels (int steps, int array_rows, char direction, uint8_t* arr){
+    int array_columns = 2;
     int i;
     int out_of_display_flag = 1;
     switch (direction)
@@ -137,13 +139,14 @@ void moveObjectPixels (int steps, int array_rows, int array_columns, char direct
         break;
     case LEFT:
         for (i = 0; i < array_rows; i++){
-            if (*(arr + i*array_columns + 1) <= 180){
+            if (*(arr + i*array_columns) == ENDOF) break;
+            if (*(arr + i*array_columns + 1) < 254){
                 out_of_display_flag = 0;
             }
             if (*(arr + i*array_columns + 1) == 0){
-                *(arr + i*array_columns + 1) = 255;
+                *(arr + i*array_columns + 1) = PIXEL_REACHED_END;
             }
-            else {
+            if (*(arr + i*array_columns + 1) != PIXEL_REACHED_END) {
                 *(arr + i*array_columns + 1) -= steps;
             }
         }
@@ -175,9 +178,10 @@ void setPixel (int row, int column){
     display_buffer[array_pos] = display_buffer[array_pos] | pow2(row_byte);
 }
 
-void setPixels (int array_rows, int array_columns, uint8_t* pixelArray){
-    int i, j;
-    for (i = 0; i < array_rows; i++){
+void setPixels (int array_rows, uint8_t* pixelArray){
+    int array_columns = 2;
+    int i;
+    for (i = 0; i < array_rows && *(pixelArray + i*array_columns) != ENDOF; i++){
         setPixel(*(pixelArray + i*array_columns),*(pixelArray + i*array_columns + 1));
     }
 }
@@ -198,9 +202,10 @@ void clearPixel (int row, int column){
     display_buffer[array_pos] = display_buffer[array_pos] & (~pow2(row_byte));
 }
 
-void clearPixels (int array_rows, int array_columns, uint8_t* pixelArray){
+void clearPixels (int array_rows, uint8_t* pixelArray){
+    int array_columns = 2;
     int i, j;
-    for (i = 0; i < array_rows; i++){
+    for (i = 0; i < array_rows && *(pixelArray + i*array_columns) != ENDOF; i++){
         clearPixel(*(pixelArray + i*array_columns),*(pixelArray + i*array_columns + 1));
     }
 }

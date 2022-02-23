@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "graphical_objects.h"
 
+
 uint8_t player[32][2] = {{11,2},{12,2},{17,2},{18,2},{12,3},
 {13,3},{16,3},{17,3},{13,4},{14,4},
 {15,4},{16,4},{13,5},{15,5},{12,6},
@@ -37,14 +38,16 @@ uint8_t (*coll_p) [9][2] = &collision_sensors;
 
 uint8_t (*obst1p) [51][2] = &obst1;
 
-uint8_t obst1_live[51][2];
-uint8_t (*obst1_livep)[51][2] = &obst1_live;
+uint8_t live_obj0[100][2];
+uint8_t (*livep0)[100][2] = &live_obj0;
+
+//uint8_t (*obst1_livep)[51][2] = &obst1_live;
 
 void reset_obst (){
     int i, j;
-    for (i = 0; i < 52; i++){
+    for (i = 0; i < 51; i++){
         for (j = 0; j < 2; j++){
-            (*obst1_livep)[i][j] = (*obst1p)[i][j];
+            (*livep0)[i][j] = (*obst1p)[i][j];
         }
     }
 }
@@ -52,9 +55,10 @@ void reset_obst (){
 int collision_check (){
     int flag;
     int i;
-    for (i = 0; i < 52; i++){
-        flag = collision_by_pixels ((*obst1_livep)[i][0], (*obst1_livep)[i][1]);
+    while((*livep0[i][0] != ENDOF && i < 100)){
+        flag = collision_by_pixels ((*livep0)[i][0], (*livep0)[i][1]);
         if (flag) return 1;
+        i++;
     }
     return 0;
 }
@@ -67,6 +71,15 @@ int collision_by_pixels (int arr_row, int arr_col){
         }
     }
     return 0;
+}
+
+void reset_live (){
+    int i, j;
+    for (i = 0; i < 100; i++){
+        for (j = 0; j < 2; j++){
+            (*livep0)[i][j] = ENDOF;
+        }
+    }
 }
 
 /*

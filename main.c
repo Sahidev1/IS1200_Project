@@ -71,27 +71,28 @@ int main() {
     int btn_stat;
     
     int flag = 0;
+    reset_live();
     reset_obst();
     while (1){
         btn_stat = getbtns();
         direction = read_direction(btn_stat);
         
-        setPixels(32,2,player[0]);
+        setPixels(32,player[0]);
         //setPixels(30, 2,obst0[0]);
-        setPixels(51,2,obst1_live[0]);
+        setPixels(100,live_obj0[0]);
 
         render();
         //quicksleep();
-        clearPixels(32,2,player[0]);
+        clearPixels(32, player[0]);
         //clearPixels(30, 2, obst0[0]);
-        clearPixels(51,2,obst1_live[0]);
+        clearPixels(100, live_obj0[0]);
 
         accurate_delay (30);
         //movePixels (1, 30, 2, 'l', obst0[0]);
-        moveObjectPixels(1,51,2,'l',obst1_live[0]);
+        moveObjectPixels(1,100,LEFT,live_obj0[0]);
         if (btn_stat){
-            movePixels (steps, 32, 2, direction, player[0]);
-            movePixels (steps, 9, 2, direction, collision_sensors[0]);
+            movePixels (steps, 32, direction, player[0]);
+            movePixels (steps, 9, direction, collision_sensors[0]);
         }
         flag = collision_check();
         if (flag == 1) break;

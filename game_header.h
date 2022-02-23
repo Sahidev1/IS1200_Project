@@ -19,17 +19,17 @@ void display_init(void);
 
 void render ();
 
-void movePixels (int steps, int array_rows, int array_columns, char direction, uint8_t* arr);
+void movePixels (int steps, int array_rows, char direction, uint8_t* arr);
 
-void moveObjectPixels (int steps, int array_rows, int array_columns, char direction, uint8_t* arr);
+void moveObjectPixels (int steps, int array_rows, char direction, uint8_t* arr);
 
 void setPixel (int row, int column);
 
-void setPixels (int array_rows, int array_columns, uint8_t* pixelArray);
+void setPixels (int array_rows, uint8_t* pixelArray);
 
 void clearPixel (int row, int column);
 
-void clearPixels (int array_rows, int array_columns, uint8_t* pixelArray);
+void clearPixels (int array_rows, uint8_t* pixelArray);
 
 void clearDisplay ();
 
