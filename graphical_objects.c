@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "graphical_objects.h"
+#include "game_header.h"
 
 
 uint8_t player[32][2] = {{11,2},{12,2},{17,2},{18,2},{12,3},
@@ -12,7 +13,6 @@ uint8_t player[32][2] = {{11,2},{12,2},{17,2},{18,2},{12,3},
 
 uint8_t collision_sensors[9][2] = {{11,2},{18,2},{12,6},{16,6},{11,10},
 {17,10},{12,12},{16,12},{14,14}};
-
 
 uint8_t obst0[30][2] = {{30,129},{31,129},{27,130},{28,130},{29,130},
 {24,131},{25,131},{26,131},{21,132},{22,132},
@@ -38,30 +38,65 @@ uint8_t (*coll_p) [9][2] = &collision_sensors;
 
 uint8_t (*obst1p) [51][2] = &obst1;
 
-uint8_t live_obj0[100][2];
-uint8_t (*livep0)[100][2] = &live_obj0;
+uint8_t live_objects[3][100][2];
+uint8_t (*live_objects_pointer)[3][100][2] = &live_objects;
+//uint8_t (*livep0)[100][2] = &live_objects[0];
 
 //uint8_t (*obst1_livep)[51][2] = &obst1_live;
 
-void reset_obst (){
-    int i, j;
-    for (i = 0; i < 51; i++){
-        for (j = 0; j < 2; j++){
-            (*livep0)[i][j] = (*obst1p)[i][j];
-        }
+void put_obstacle_in_live (int k, int rows, uint8_t *obst_pointer){
+    int cols = 2;
+    int i,j;
+    for (i = 0; i < rows; i++){
+        (*live_objects_pointer)[k][i][0] = *(obst_pointer + i*cols);
+        (*live_objects_pointer)[k][i][1] = *(obst_pointer + i*cols + 1);
+    }
+    
+}
+
+void generate_obstacle (){
+    int type = random_number(2);
+    switch (type)
+    {
+    case 0:
+        put_obstacle_in_live(0, 30, obst0[0]);
+        break;
+    case 1:
+        put_obstacle_in_live(0, 51, obst1[0]);
+        break;
+    default:
+        break;
     }
 }
 
+
+void disassemble_obstacle (int index){
+    int i, j;
+    int k = index;
+    for (i = 0; i < 100; i++){
+        for (j = 0; j < 2; j++){
+            if ((*live_objects_pointer)[k][i][j] == ENDOF) break;
+            (*live_objects_pointer)[k][i][j] = ENDOF;
+        }
+    }
+    generate_obstacle();
+}
+
+
 int collision_check (){
     int flag;
-    int i;
-    while((*livep0[i][0] != ENDOF && i < 100)){
-        flag = collision_by_pixels ((*livep0)[i][0], (*livep0)[i][1]);
-        if (flag) return 1;
-        i++;
+    int i, k;
+    for (k = 0; k < 3; k++){
+        i = 0;
+        while((*live_objects_pointer)[k][i][0] != ENDOF && i < LIVE_SIZE){
+            flag = collision_by_pixels ((*live_objects_pointer)[k][i][0], (*live_objects_pointer)[k][i][1]);
+            if (flag) return 1;
+            i++;
+        }
     }
     return 0;
 }
+
 
 int collision_by_pixels (int arr_row, int arr_col){
     int i;
@@ -73,11 +108,13 @@ int collision_by_pixels (int arr_row, int arr_col){
     return 0;
 }
 
-void reset_live (){
-    int i, j;
-    for (i = 0; i < 100; i++){
-        for (j = 0; j < 2; j++){
-            (*livep0)[i][j] = ENDOF;
+void init_live (){
+    int i, j, k;
+    for (k = 0; k < 3; k++){
+        for (i = 0; i < 100; i++){
+            for (j = 0; j < 2; j++){
+                (*live_objects_pointer)[k][i][j] = ENDOF;
+            }
         }
     }
 }

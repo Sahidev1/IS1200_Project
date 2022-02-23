@@ -122,63 +122,61 @@ void movePlayerPixels (int steps, int array_rows, char direction, uint8_t* arr){
 
 
 // coordinates >= 200 invalid
-void moveObjectPixels (int steps, int array_rows, char direction, uint8_t* arr){
+void moveObjectPixels (int arr_index, int steps, char direction){
     int array_columns = 2;
-    int i;
+    int i, k;
+    k = arr_index;
     int out_of_display_flag = 1;
     switch (direction)
     {
     case RIGHT:
-        for (i = 0; i < array_rows; i++){
-            *(arr + i*array_columns + 1) += steps;
-        }
         break;
     case LEFT:
-        for (i = 0; i < array_rows; i++){
-            if (*(arr + i*array_columns) == ENDOF) break;
-            if (*(arr + i*array_columns + 1) < 254){
+        for (i = 0; i < LIVE_SIZE; i++){
+            if ((*live_objects_pointer)[k][i][0] == ENDOF) break;
+            if ((*live_objects_pointer)[k][i][1] < PIXEL_REACHED_END){
                 out_of_display_flag = 0;
             }
-            if (*(arr + i*array_columns + 1) == 0){
-                *(arr + i*array_columns + 1) = PIXEL_REACHED_END;
+            if ((*live_objects_pointer)[k][i][1] == 0){
+                (*live_objects_pointer)[k][i][1] = PIXEL_REACHED_END;
             }
-            if (*(arr + i*array_columns + 1) != PIXEL_REACHED_END) {
-                *(arr + i*array_columns + 1) -= steps;
+            if ((*live_objects_pointer)[k][i][1] != PIXEL_REACHED_END) {
+                (*live_objects_pointer)[k][i][1] -=steps;
             }
         }
         break;
     case DOWN:
-        for (i = 0; i < array_rows; i++){
-            *(arr + i*array_columns) += steps;
-        }
         break;
     case UP:
-        for (i = 0; i < array_rows; i++){
-            *(arr + i*array_columns) -= steps;
-        }
         break;
     default:
         break;
     }
     if (out_of_display_flag){
-        reset_obst();
+        disassemble_obstacle(k);
     }   
 }
 
-void setPixel (int row, int column){
+void setPixel (int on_off,int row, int column){
     if (row >= 32 || column >= 128) return;
     int page = row / 8;
     uint8_t row_byte = ((uint8_t)row) % 8;
     int array_pos = page*128 + column;
 
-    display_buffer[array_pos] = display_buffer[array_pos] | pow2(row_byte);
+    if (on_off == ON){
+        display_buffer[array_pos] = display_buffer[array_pos] | pow2(row_byte);
+    }
+    else {
+        display_buffer[array_pos] = display_buffer[array_pos] & (~pow2(row_byte));
+    }
 }
 
-void setPixels (int array_rows, uint8_t* pixelArray){
+void setObjectPixels (int ON_OFF,int live_index){
     int array_columns = 2;
-    int i;
-    for (i = 0; i < array_rows && *(pixelArray + i*array_columns) != ENDOF; i++){
-        setPixel(*(pixelArray + i*array_columns),*(pixelArray + i*array_columns + 1));
+    int i, k;
+    k = live_index;
+    for (i = 0; i < LIVE_SIZE && (*live_objects_pointer)[k][i][0] != ENDOF; i++){
+        setPixel(ON_OFF,(*live_objects_pointer)[k][i][0],(*live_objects_pointer)[k][i][1]);
     }
 }
 
@@ -190,6 +188,7 @@ int getPixel (int row, int column){
     return (display_buffer[array_pos] & (pow2(row_byte))) >> row_byte;
 }
 
+/*
 void clearPixel (int row, int column){
     if (row >= 32 || column >= 128) return;
     int page = row / 8;
@@ -198,12 +197,13 @@ void clearPixel (int row, int column){
 
     display_buffer[array_pos] = display_buffer[array_pos] & (~pow2(row_byte));
 }
+*/
 
-void clearPixels (int array_rows, uint8_t* pixelArray){
+void setPlayerPixels (int ON_OFF,int array_rows, uint8_t* pixelArray){
     int array_columns = 2;
     int i, j;
     for (i = 0; i < array_rows && *(pixelArray + i*array_columns) != ENDOF; i++){
-        clearPixel(*(pixelArray + i*array_columns),*(pixelArray + i*array_columns + 1));
+        setPixel(ON_OFF,*(pixelArray + i*array_columns),*(pixelArray + i*array_columns + 1));
     }
 }
 
@@ -211,7 +211,7 @@ void clearDisplay (){
     int i, j;
     for (i = 0; i < ROWS; i++){
         for (j = 0; j < COLUMNS; j++){
-            clearPixel(i, j);
+            setPixel(OFF, i, j);
         }
     }
     render();

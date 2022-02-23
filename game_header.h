@@ -8,6 +8,9 @@
 #define RIGHT 'r'
 #define LEFT 'l'
 
+#define OFF 0
+#define ON 1
+
 
 /* Display related */
 extern char textbuffer[4][16];
@@ -20,16 +23,17 @@ void display_init(void);
 void render ();
 
 void movePlayerPixels (int steps, int array_rows, char direction, uint8_t* arr);
+void moveObjectPixels (int arr_index, int steps, char direction);
 
-void moveObjectPixels (int steps, int array_rows, char direction, uint8_t* arr);
+void setPixel (int on_off,int row, int column);
 
-void setPixel (int row, int column);
+void setObjectPixels (int ON_OFF,int live_index);
 
-void setPixels (int array_rows, uint8_t* pixelArray);
+void setPlayerPixels (int ON_OFF,int array_rows, uint8_t* pixelArray);
 
-void clearPixel (int row, int column);
+//void clearPixel (int row, int column);
 
-void clearPixels (int array_rows, uint8_t* pixelArray);
+//void clearPixels (int live_index);
 
 void clearDisplay ();
 
@@ -54,6 +58,7 @@ char read_direction (int btn_stat);
 
 
 
+int random_number (int range);
 
 void game ();
 
