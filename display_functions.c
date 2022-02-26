@@ -15,14 +15,26 @@
 #define DISPLAY_TURN_OFF_VDD (PORTFSET = 0x40)
 #define DISPLAY_TURN_OFF_VBAT (PORTFSET = 0x20)
 
-#define COLUMNS 128
-#define ROWS 32
-#define PAGE_COUNT 4
+#define COLUMNS 128 // columns of pixels on OLED
+#define ROWS 32 // rows of pixels on OLED
+#define PAGE_COUNT 4 // number of 8 pixel high rows
 
+/**
+ * @brief useful delay tool that's not dependent on timers
+ * Inspired by Fredrik Lundevalls quicksleep implementation
+ * 
+ * @param cycles 
+ */
 void quicksleep (int cycles){
     while (cycles-- > 0);
 }
 
+/**
+ * @brief sends data and receives data from SPI
+ * 
+ * @param data byte to send
+ * @return uint8_t byte received
+ */
 uint8_t spi_send_recv(uint8_t data) {
 	while(!(SPI2STAT & 0x08));
 	SPI2BUF = data;
@@ -30,6 +42,10 @@ uint8_t spi_send_recv(uint8_t data) {
 	return SPI2BUF;
 }
 
+/**
+ * @brief Initializes the OLED On the chipkit
+ * Code is taken from LAB3
+ */
 void display_init(void) {
     DISPLAY_CHANGE_TO_COMMAND_MODE;
 	quicksleep(10);
@@ -60,6 +76,11 @@ void display_init(void) {
 	spi_send_recv(0xAF);
 }
 
+/**
+ * @brief Renders the data in display_buffer to OLED
+ * Each byte represents an 8 pixel column on a page
+ * 
+ */
 void render (){
     int buffer_index = 0;
     int i, j;
@@ -79,6 +100,14 @@ void render (){
     }
 }
 
+/**
+ * @brief Moves the players pixel coordinates up, down, left or right
+ * 
+ * @param steps number of pixels to move across at certains direction
+ * @param array_rows number of (x,y) pixel coordinates in 2d array
+ * @param direction direction to move pixel coordinates
+ * @param arr array that contains pixel coordinates
+ */
 void movePlayerPixels (int steps, int array_rows, char direction, uint8_t* arr){
     int array_columns = 2;
     int i;
@@ -121,7 +150,14 @@ void movePlayerPixels (int steps, int array_rows, char direction, uint8_t* arr){
 }
 
 
-// coordinates >= 200 invalid
+
+/**
+ * @brief Moves non-player object pixel coordinates, such as obstacles
+ * 
+ * @param arr_index which obstacle on array of live obstacles to move
+ * @param steps pixels to move across in a certain direction
+ * @param direction direction up,down,left or right
+ */
 void moveObjectPixels (int arr_index, int steps, char direction){
     int array_columns = 2;
     int i, k;
@@ -157,6 +193,13 @@ void moveObjectPixels (int arr_index, int steps, char direction){
     }   
 }
 
+/**
+ * @brief This function sets the status of 1 pixel in the display buffer
+ * 
+ * @param on_off set pixel to on or off, 0 or 1
+ * @param row the row of the pixel on the oled
+ * @param column the column of the pixel on the oled
+ */
 void setPixel (int on_off,int row, int column){
     if (row >= 32 || column >= 128) return;
     int page = row / 8;
@@ -171,6 +214,12 @@ void setPixel (int on_off,int row, int column){
     }
 }
 
+/**
+ * @brief Puts an objects pixel coordinates on the display buffer
+ * 
+ * @param ON_OFF whether to turn off the objects pixels, or turn on
+ * @param live_index which obstacle in array of obstacles
+ */
 void setObjectPixels (int ON_OFF,int live_index){
     int array_columns = 2;
     int i, k;
@@ -180,6 +229,13 @@ void setObjectPixels (int ON_OFF,int live_index){
     }
 }
 
+/**
+ * @brief Returns pixel value of an OLED coordinate from display buffer
+ * 
+ * @param row pixel row on OLED
+ * @param column pixel column on OLED
+ * @return int 
+ */
 int getPixel (int row, int column){
     int page = row / 8;
     uint8_t row_byte = ((uint8_t)row) % 8;
@@ -188,17 +244,13 @@ int getPixel (int row, int column){
     return (display_buffer[array_pos] & (pow2(row_byte))) >> row_byte;
 }
 
-/*
-void clearPixel (int row, int column){
-    if (row >= 32 || column >= 128) return;
-    int page = row / 8;
-    uint8_t row_byte = ((uint8_t)row) % 8;
-    int array_pos = page*128 + column;
-
-    display_buffer[array_pos] = display_buffer[array_pos] & (~pow2(row_byte));
-}
-*/
-
+/**
+ * @brief Put the players pixel coordinates into the display buffer
+ * 
+ * @param ON_OFF set the players pixels to on or off, on the display buffer
+ * @param array_rows number of (x,y) coordinates in 2d pixel coordinate array
+ * @param pixelArray array of pixel coordinates
+ */
 void setPlayerPixels (int ON_OFF,int array_rows, uint8_t* pixelArray){
     int array_columns = 2;
     int i, j;
@@ -207,6 +259,10 @@ void setPlayerPixels (int ON_OFF,int array_rows, uint8_t* pixelArray){
     }
 }
 
+/**
+ * @brief Clears the entire display buffer
+ * 
+ */
 void clearDisplay (){
     int i, j;
     for (i = 0; i < ROWS; i++){

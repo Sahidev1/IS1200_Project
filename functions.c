@@ -3,6 +3,11 @@
 #include "game_header.h"
 int delay_counter = 0;
 
+/**
+ * @brief Interuptions Service Routine that handles interrupts in
+ * the program
+ * 
+ */
 void user_isr(void){
     IFSCLR(0) = 0x100;
     if (delay_counter == INT32_MAX){
@@ -11,21 +16,39 @@ void user_isr(void){
     delay_counter++;
 }
 
+/**
+ * @brief creats a millisecond accuracy delay
+ * 
+ * @param ms milliseconds delay
+ */
 void accurate_delay (int ms){
     delay_counter = 0;
     while (delay_counter < ms);
 }
 
-// reads GPIO pin 8 to 11 status
+/** 
+    reads switch 1,2,3,4 status
+    returns a value with ON/OFF status of switches at
+    4 least significant bits
+    code taken from LAB 3
+*/
 int getsw (void){
     return (PORTD & (0xf << 8)) >> 8;
 }
 
-// reads GPIO pin 5 to 7 status
+/**
+    reads BTN 1,2,3,4 status
+    returns a value with ON/OFF status of buttons at
+    4 least significant bits
+    code taken from LAB 3
+*/
 int getbtns (void) {
     return ((PORTD & (0b111 << 5)) >> 4) | ((PORTF & 0x2) >> 1);
 }
 
+/**
+    translates direction from button pushed
+*/
 char read_direction (int btn_stat){
     switch (btn_stat)
     {
@@ -43,6 +66,10 @@ char read_direction (int btn_stat){
     return 0;
 }
 
+/**
+    This function initializes the LEDs, Button, switches and timer 2
+    Code is taken from LAB 3
+*/
 void Initialize_IO( void )
 {
     volatile unsigned* port_E_IO = (volatile unsigned*) 0xBF886100;
@@ -51,13 +78,11 @@ void Initialize_IO( void )
     volatile unsigned* port_E = (volatile unsigned*) 0xBF886110;
     *port_E = 0x0;
 
-    //TRISD: 0xBF8860C0
-    //PORTD: 0xBF8860D0
-
     TRISD = TRISD | (0b1111111 << 5);
     TRISFSET = 0x2;
 
-    // Setting up timer 2
+
+    /* Setting up timer 2 */
 
     // disabling timer 2
     T2CONCLR = 0x8000;
@@ -88,8 +113,6 @@ void Initialize_IO( void )
     // clearing interrupt flag bit
     IFSCLR(0) = 0x100;
 
-    //IFSSET(0) = 0x100;
-    
     enable_interrupt(); 
 
     // starting timer 2
@@ -98,6 +121,10 @@ void Initialize_IO( void )
     return;
 }
 
+/**
+    Helper function that calculates powers of 2
+    argument N will output 2^N
+*/
 uint8_t pow2 (uint8_t exponent){
     if (exponent == 0) return 1;
     return (uint8_t) 2 << (exponent - 1);

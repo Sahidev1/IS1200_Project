@@ -1,20 +1,23 @@
 #include <pic32mx.h>
 #include <stdint.h>
 
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 512 // Size of display buffer
 
+// direction definitions
 #define UP 'u'
 #define DOWN 'd'
 #define RIGHT 'r'
 #define LEFT 'l'
 
+// ON OFF definitions
 #define OFF 0
 #define ON 1
 
 
 /* Display related */
 extern char textbuffer[4][16];
-extern uint8_t display_buffer[BUFFER_SIZE];
+
+extern uint8_t display_buffer[BUFFER_SIZE]; // display buffer that is accessible by any c file in the program
 
 uint8_t spi_send_recv(uint8_t data);
 
@@ -23,6 +26,7 @@ void display_init(void);
 void render ();
 
 void movePlayerPixels (int steps, int array_rows, char direction, uint8_t* arr);
+
 void moveObjectPixels (int arr_index, int steps, char direction);
 
 void setPixel (int on_off,int row, int column);
@@ -30,10 +34,6 @@ void setPixel (int on_off,int row, int column);
 void setObjectPixels (int ON_OFF,int live_index);
 
 void setPlayerPixels (int ON_OFF,int array_rows, uint8_t* pixelArray);
-
-//void clearPixel (int row, int column);
-
-//void clearPixels (int live_index);
 
 void clearDisplay ();
 
@@ -57,13 +57,9 @@ void accurate_delay (int ms);
 char read_direction (int btn_stat);
 
 
+/* utility/helper functions */
 
 int random_number (int range);
-
-void game ();
-
-
-void user_isr(void);
 
 uint8_t pow2 (uint8_t exponent);
 
