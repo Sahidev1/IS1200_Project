@@ -22,7 +22,7 @@ extern char textbuffer[4][16];
 
 extern uint8_t display_buffer[BUFFER_SIZE]; // display buffer that is accessible by any c file in the program
 
-extern int object_move_delay;
+extern int obstacle_move_delay;
 extern int player_move_delay;
 
 uint8_t spi_send_recv(uint8_t data);
@@ -60,7 +60,7 @@ void accurate_delay (int ms);
 
 void init_delays ();
 
-int check_object_delay (int ms);
+int check_obstacle_delay (int ms);
 
 int check_player_delay (int ms);
 

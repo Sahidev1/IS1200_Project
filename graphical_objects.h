@@ -6,12 +6,16 @@
 #define LIVE_SIZE 145 // size of live object array
 #define MAX_LIVE_OBST 3 // max live obstacles
 
+typedef struct Obstacle_Data {
+    int* filled_array_indexes;
+    int* obstacle_type_at_array_indexes;
+} obstData;
+
+extern obstData obst_data;
 extern uint8_t player[32][2]; // Player pixel coordinates is globally is accesible to all c files
 extern uint8_t collision_sensors[9][2];
 
 extern uint8_t (*live_obstacles_pointer)[MAX_LIVE_OBST][LIVE_SIZE][2]; // live object array pointer is accesible to all c files
-
-void reset_obst ();
 
 void init_live ();
 

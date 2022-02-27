@@ -3,7 +3,7 @@
 #include "game_header.h"
 
 void obst1_procedure();
-
+void obst2_procedure ();
 // Player pixel coordinates
 uint8_t player[32][2] = {{11,2},{12,2},{17,2},{18,2},{12,3},
 {13,3},{16,3},{17,3},{13,4},{14,4},
@@ -29,18 +29,6 @@ uint8_t obst0[30][2] = {{30,129},{31,129},{27,130},{28,130},{29,130},
 {22,136},{23,136},{24,137},{25,137},{26,137},
 {27,138},{28,138},{29,138},{30,139},{31,139}
 };
-
-uint8_t obst1[51][2] = {{0,130},{1,130},{2,130},{3,130},{4,130},
-{20,130},{21,130},{22,130},{23,130},{24,130},
-{25,130},{26,130},{27,130},{28,130},{29,130},
-{30,130},{31,130},{4,131},{5,131},{19,131},
-{21,131},{5,132},{18,132},{22,132},{5,133},
-{18,133},{22,133},{5,134},{18,134},{22,134},
-{4,135},{5,135},{19,135},{21,135},{0,136},
-{1,136},{2,136},{3,136},{4,136},{20,136},
-{21,136},{22,136},{23,136},{24,136},{25,136},
-{26,136},{27,136},{28,136},{29,136},{30,136},
-{31,136}};
 
 uint8_t obst1lower[80][2] = {{29,129},{30,129},{31,129},{32,129},{33,129},
 {34,129},{35,129},{36,129},{37,129},{38,129},
@@ -77,7 +65,11 @@ uint8_t obst1upper[65][2] =
 {25,135},{26,135},{27,135},{28,135},{29,135}
 };
 
-
+uint8_t obst2[20][2] = {{24,129},{25,129},{26,129},{27,129},{28,129},
+{29,129},{30,129},{24,130},{30,130},{24,131},
+{30,131},{24,132},{30,132},{24,133},{25,133},
+{26,133},{27,133},{28,133},{29,133},{30,133}
+};
 
 // Array pointer to collision sensor
 uint8_t (*coll_p) [9][2] = &collision_sensors;
@@ -85,6 +77,8 @@ uint8_t (*coll_p) [9][2] = &collision_sensors;
 // Array pointer to array of live 2d objects
 uint8_t live_obstacles[3][LIVE_SIZE][2];
 uint8_t (*live_obstacles_pointer)[3][LIVE_SIZE][2] = &live_obstacles;
+
+obstData obst_data;
 
 /**
  * @brief copies a non-live obstacle and puts it in live objects array
@@ -113,16 +107,14 @@ void put_obstacle_in_live (int k, int rows, uint8_t *obst_pointer){
 void generate_obstacle (){
     int type = random_number(2);
     int i;
-    uint8_t steps;
-    uint8_t temparr[65][2];
-    
+    LED_debugger(type);
     switch (type)
     {
     case 0:
         obst1_procedure();
         break;
     case 1:
-        obst1_procedure();
+        obst2_procedure();
         break;
     default:
         break;
@@ -200,6 +192,13 @@ void init_live (){
     }
 }
 
+int vals[3] = {0,0,0};
+int vals1[3] = {-1,-1,-1};
+void init_structs (){
+    obst_data.filled_array_indexes = &vals[0];
+    obst_data.obstacle_type_at_array_indexes = &vals1[0];
+}
+
 /**
  * @brief Procedure for combining obst1lower and obst1upper into
  * one cohesive obstacle on the live objects array
@@ -254,3 +253,44 @@ void obst1_procedure (){
     put_obstacle_in_live(0,145, temparr[0]);
 }
 
+void obst2_procedure (){
+    uint8_t temparr[80][2];
+    int height_increase = random_number(13);
+    random_number(3);
+    int increase_flag = height_increase;
+    int nr_elements = 20;
+    int i,j,k;
+
+    k = 0;
+    for (i = 0; i < 20; i++){
+       if (obst2[i][0] == 24 && (obst2[i][1] >= 130 && obst2[i][1] <= 132)){
+           nr_elements--;
+            continue;
+       }
+        temparr[k][0] = obst2[i][0];
+        temparr[k++][1] = obst2[i][1];
+    }
+ 
+    int row = 23;
+    int col1 = 129;
+    int col2 = 133;
+    while (height_increase > 0){
+        temparr[k][0] = row;
+        temparr[k++][1] = col1;
+        temparr[k][0] = row--;
+        temparr[k++][1] = col2;
+        height_increase--;
+        nr_elements += 2;
+    }
+    row++;
+
+    if (increase_flag){
+        for (j = col1 + 1; j < col2; j++){
+            temparr[k][0] = row;
+            temparr[k++][1] = j;
+            nr_elements++;
+        }
+    }
+
+    put_obstacle_in_live(0, nr_elements, temparr[0]);
+}
