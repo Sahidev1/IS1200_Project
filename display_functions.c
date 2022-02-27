@@ -167,15 +167,15 @@ void moveObjectPixels (int arr_index, int steps, char direction){
         break;
     case LEFT:
         for (i = 0; i < LIVE_SIZE; i++){
-            if ((*live_objects_pointer)[k][i][0] == ENDOF) break;
-            if ((*live_objects_pointer)[k][i][1] < PIXEL_REACHED_END){
+            if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
+            if ((*live_obstacles_pointer)[k][i][1] < PIXEL_REACHED_END){
                 out_of_display_flag = 0;
             }
-            if ((*live_objects_pointer)[k][i][1] == 0){
-                (*live_objects_pointer)[k][i][1] = PIXEL_REACHED_END;
+            if ((*live_obstacles_pointer)[k][i][1] == 0){
+                (*live_obstacles_pointer)[k][i][1] = PIXEL_REACHED_END;
             }
-            if ((*live_objects_pointer)[k][i][1] != PIXEL_REACHED_END) {
-                (*live_objects_pointer)[k][i][1] -=steps;
+            if ((*live_obstacles_pointer)[k][i][1] != PIXEL_REACHED_END) {
+                (*live_obstacles_pointer)[k][i][1] -=steps;
             }
         }
         break;
@@ -183,8 +183,8 @@ void moveObjectPixels (int arr_index, int steps, char direction){
         break;
     case UP:
         for (i = 0; i < LIVE_SIZE; i++){
-            if ((*live_objects_pointer)[k][i][0] == ENDOF) break;
-            (*live_objects_pointer)[k][i][0] -=steps;
+            if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
+            (*live_obstacles_pointer)[k][i][0] -=steps;
         }
         break;
     default:
@@ -226,8 +226,8 @@ void setObjectPixels (int ON_OFF,int live_index){
     int array_columns = 2;
     int i, k;
     k = live_index;
-    for (i = 0; i < LIVE_SIZE && (*live_objects_pointer)[k][i][0] != ENDOF; i++){
-        setPixel(ON_OFF,(*live_objects_pointer)[k][i][0],(*live_objects_pointer)[k][i][1]);
+    for (i = 0; i < LIVE_SIZE && (*live_obstacles_pointer)[k][i][0] != ENDOF; i++){
+        setPixel(ON_OFF,(*live_obstacles_pointer)[k][i][0],(*live_obstacles_pointer)[k][i][1]);
     }
 }
 

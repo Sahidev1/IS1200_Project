@@ -83,8 +83,8 @@ uint8_t obst1upper[65][2] =
 uint8_t (*coll_p) [9][2] = &collision_sensors;
 
 // Array pointer to array of live 2d objects
-uint8_t live_objects[3][LIVE_SIZE][2];
-uint8_t (*live_objects_pointer)[3][LIVE_SIZE][2] = &live_objects;
+uint8_t live_obstacles[3][LIVE_SIZE][2];
+uint8_t (*live_obstacles_pointer)[3][LIVE_SIZE][2] = &live_obstacles;
 
 /**
  * @brief copies a non-live obstacle and puts it in live objects array
@@ -98,9 +98,9 @@ void put_obstacle_in_live (int k, int rows, uint8_t *obst_pointer){
     int i,j;
     j = 0;
     for (i = 0; i < rows; i++){
-        if (*(obst_pointer + i*cols) == 253) continue;
-        (*live_objects_pointer)[k][j][0] = *(obst_pointer + i*cols);
-        (*live_objects_pointer)[k][j][1] = *(obst_pointer + i*cols + 1);
+        if (*(obst_pointer + i*cols) == ROW_COORD_OUT_OF_BOUNDS) continue;
+        (*live_obstacles_pointer)[k][j][0] = *(obst_pointer + i*cols);
+        (*live_obstacles_pointer)[k][j][1] = *(obst_pointer + i*cols + 1);
         j++;
     }
     
@@ -119,28 +119,10 @@ void generate_obstacle (){
     switch (type)
     {
     case 0:
-    /*
-        steps = 15;
-
-        int temparr[65][2];
-        
-        for (i = 0; i < 65; i++){
-            if ((uint8_t)(obst1upper[i][0] - steps) <= ENDOF && (uint8_t) (obst1upper[i][0] - steps) > 31){
-                obst1upper[i][0] = 253;
-                obst1upper[i][1] = 253;
-            }
-            else {
-                obst1upper[i][0] -= steps;
-            }
-        }
-        
-        put_obstacle_in_live(0, 65, obst1upper[0]);
-        */
         obst1_procedure();
         break;
     case 1:
         obst1_procedure();
-        //moveObjectPixels (0,5,UP);
         break;
     default:
         break;
@@ -157,8 +139,8 @@ void disassemble_obstacle (int index){
     int k = index;
     for (i = 0; i < LIVE_SIZE; i++){
         for (j = 0; j < 2; j++){
-            if ((*live_objects_pointer)[k][i][j] == ENDOF) break;
-            (*live_objects_pointer)[k][i][j] = ENDOF;
+            if ((*live_obstacles_pointer)[k][i][j] == ENDOF) break;
+            (*live_obstacles_pointer)[k][i][j] = ENDOF;
         }
     }
     generate_obstacle();
@@ -174,8 +156,8 @@ int collision_check (){
     int i, k;
     for (k = 0; k < 3; k++){
         i = 0;
-        while((*live_objects_pointer)[k][i][0] != ENDOF && i < LIVE_SIZE){
-            flag = collision_by_pixels ((*live_objects_pointer)[k][i][0], (*live_objects_pointer)[k][i][1]);
+        while((*live_obstacles_pointer)[k][i][0] != ENDOF && i < LIVE_SIZE){
+            flag = collision_by_pixels ((*live_obstacles_pointer)[k][i][0], (*live_obstacles_pointer)[k][i][1]);
             if (flag) return 1;
             i++;
         }
@@ -183,11 +165,18 @@ int collision_check (){
     return 0;
 }
 
-
-int collision_by_pixels (int arr_row, int arr_col){
+/**
+ * @brief checks wheter coordinate from obstacle pixel array 
+ * collides with sensor pixel coordinates
+ * 
+ * @param row_coord row coordinate on OLED
+ * @param col_coord column coordinate on OLED
+ * @return int , 0 for false, 1 for true
+ */
+int collision_by_pixels (int row_coord, int col_coord){
     int i;
     for (i = 0; i < 9; i++){
-        if ((arr_row == (*coll_p)[i][0]) && (arr_col == (*coll_p)[i][1])){
+        if ((row_coord == (*coll_p)[i][0]) && (col_coord == (*coll_p)[i][1])){
             return 1;
         }
     }
@@ -205,15 +194,26 @@ void init_live (){
     for (k = 0; k < 3; k++){
         for (i = 0; i < LIVE_SIZE; i++){
             for (j = 0; j < 2; j++){
-                (*live_objects_pointer)[k][i][j] = ENDOF;
+                (*live_obstacles_pointer)[k][i][j] = ENDOF;
             }
         }
     }
 }
 
-uint8_t temparr[145][2];
-
+/**
+ * @brief Procedure for combining obst1lower and obst1upper into
+ * one cohesive obstacle on the live objects array
+ * 
+ * The obstacles properties are randomly generated, such as the
+ * length of its upper and lowers part, as well as the spacing between 
+ * the two parts is randomly generated
+ */
 void obst1_procedure (){
+    int obst1upper_size = 65;
+    int obst1lower_size = 80;
+    int combined_size = 145;
+
+    uint8_t temparr[combined_size][2];
     uint8_t steps_lower = (uint8_t)random_number(10);
     uint8_t height_up = steps_lower + 5;
     uint8_t space_beetween = (uint8_t) random_number_between (10, 16);
@@ -221,18 +221,15 @@ void obst1_procedure (){
     uint8_t steps_upper = ROWS - height_down;
 
     int i, j;
-    
-    //uint8_t templower[80][2];
-
-    for (i = 0; i < 65; i++){
+    for (i = 0; i < obst1upper_size; i++){
         temparr[i][0] = obst1upper[i][0];
         temparr[i][1] = obst1upper[i][1];
     }
         
-    for (i = 0; i < 65; i++){
+    for (i = 0; i < obst1upper_size; i++){
         if ((uint8_t)(temparr[i][0] - steps_upper) <= ENDOF && (uint8_t) (temparr[i][0] - steps_upper) > 31){
-            temparr[i][0] = 253;
-            temparr[i][1] = 253;
+            temparr[i][0] = ROW_COORD_OUT_OF_BOUNDS;
+            temparr[i][1] = ROW_COORD_OUT_OF_BOUNDS;
         }
         else {
             temparr[i][0] -= steps_upper;
@@ -240,22 +237,20 @@ void obst1_procedure (){
     }
 
     j = 0;
-    for (i = 65; i < 145; i++){
+    for (i = obst1upper_size; i < combined_size; i++){
         temparr[i][0] = obst1lower[j][0];
         temparr[i][1] = obst1lower[j][1];
         j++;
     }
-    for (i = 65; i < 145; i++){
+    for (i = obst1upper_size; i < combined_size; i++){
         temparr[i][0] -= steps_lower;
     }
-    for (i = 65; i < 145; i++){
+    for (i = obst1upper_size; i < combined_size; i++){
         if ((uint8_t)(temparr[i][0]) <= ENDOF && (uint8_t) (temparr[i][0]) > 31){
-            temparr[i][0] = 253;
-            temparr[i][1] = 253;
+            temparr[i][0] = ROW_COORD_OUT_OF_BOUNDS;
+            temparr[i][1] = ROW_COORD_OUT_OF_BOUNDS;
         }
     }
-    
     put_obstacle_in_live(0,145, temparr[0]);
-    //put_obstacle_in_live(1,80, templower[0]);
 }
 

@@ -56,13 +56,13 @@ void user_isr(void);
 
 int getbtns (void);
 
-void buffer_update ();
-
 void accurate_delay (int ms);
 
-void reset_delay_counter ();
+void init_delays ();
 
-int check_delay (int ms);
+int check_object_delay (int ms);
+
+int check_player_delay (int ms);
 
 char read_direction (int btn_stat);
 

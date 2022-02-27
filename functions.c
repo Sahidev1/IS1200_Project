@@ -1,7 +1,7 @@
 #include <pic32mx.h>
 #include <stdint.h>
 #include "game_header.h"
-int object_move_delay;
+int obstacle_move_delay;
 int player_move_delay;
 
 /**
@@ -11,21 +11,49 @@ int player_move_delay;
  */
 void user_isr(void){
     IFSCLR(0) = 0x100;
-    if (object_move_delay == INT32_MAX){
-        object_move_delay = 0;
+    if (obstacle_move_delay == INT32_MAX){
+        obstacle_move_delay = 0;
+    }
+    if (player_move_delay == INT32_MAX){
         player_move_delay = 0;
     }
-    object_move_delay++;
+    obstacle_move_delay++;
     player_move_delay++;
 }
 
-void reset_delay_counter (){
-    object_move_delay = 0;
+/**
+ * @brief initializes global delay variables
+ * 
+ */
+void init_delays(){
+    obstacle_move_delay = 0;
+    player_move_delay = 0;
 }
 
-int check_delay (int ms){
-    if (object_move_delay >= ms){
-        reset_delay_counter();
+/**
+ * @brief checks delay variable assosciated with player movement delay
+ * if delay variable equals ms we have achieved desired delay
+ * @param ms desired delay in milliseconds
+ * @return int 0 if false, 1 if true
+ */
+int check_player_delay (int ms){
+    if (player_move_delay >= ms){
+        player_move_delay = 0;
+        return 1;
+    }
+    return 0;
+}
+
+/**
+ * @brief checks delay variable assosciated with obstacle movement delay
+ * if delay variable equals ms we have achieved desired delay
+ * 
+ * @param ms desired delay in milliseconds
+ * @return int int 0 if false, 1 if true
+ */
+int check_obstacle_delay (int ms){
+    if (obstacle_move_delay >= ms){
+        obstacle_move_delay = 0;
         return 1;
     }
     return 0;
@@ -37,8 +65,8 @@ int check_delay (int ms){
  * @param ms milliseconds delay
  */
 void accurate_delay (int ms){
-    object_move_delay = 0;
-    while (object_move_delay < ms);
+    obstacle_move_delay = 0;
+    while (obstacle_move_delay < ms);
 }
 
 /** 
@@ -136,6 +164,12 @@ void Initialize_IO( void )
     return;
 }
 
+/**
+ * @brief A debugger that uses the IO shield LEDS
+ * note that it display 8 least significant bits of val
+ * 
+ * @param val 8 bit value to display
+ */
 void LED_debugger (int val){
     PORTE = val;
 }
