@@ -70,9 +70,13 @@ int main() {
     int steps = 1;
     int btn_stat;
     
+    int delay;
+
     int flag = 0;
     init_live();
     generate_obstacle();
+    reset_delay_counter();
+    player_move_delay = 0;
     while (1){
         btn_stat = getbtns();
         direction = read_direction(btn_stat);
@@ -86,17 +90,21 @@ int main() {
         //quicksleep();
         setPlayerPixels(OFF, 32, player[0]);
         //clearPixels(30, 2, obst0[0]);
-       
+        
         setObjectPixels (OFF, 0);
         
 
-        accurate_delay (30);
+        //accurate_delay (100);
         //movePlayerPixels (1, 30, 2, 'l', obst0[0]);
-        moveObjectPixels(0,1, LEFT);
         
-        if (btn_stat){
+        delay = check_delay(50);
+        if (delay) moveObjectPixels(0,1, LEFT);
+        
+
+        if (btn_stat && player_move_delay >= 20){
             movePlayerPixels (steps, 32, direction, player[0]);
             movePlayerPixels (steps, 9, direction, collision_sensors[0]);
+            player_move_delay = 0;
         }
         if (collision_check()) break;
     }

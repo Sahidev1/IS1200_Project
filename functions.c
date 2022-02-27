@@ -1,7 +1,8 @@
 #include <pic32mx.h>
 #include <stdint.h>
 #include "game_header.h"
-int delay_counter = 0;
+int object_move_delay;
+int player_move_delay;
 
 /**
  * @brief Interuptions Service Routine that handles interrupts in
@@ -10,10 +11,24 @@ int delay_counter = 0;
  */
 void user_isr(void){
     IFSCLR(0) = 0x100;
-    if (delay_counter == INT32_MAX){
-        delay_counter == 0;
+    if (object_move_delay == INT32_MAX){
+        object_move_delay = 0;
+        player_move_delay = 0;
     }
-    delay_counter++;
+    object_move_delay++;
+    player_move_delay++;
+}
+
+void reset_delay_counter (){
+    object_move_delay = 0;
+}
+
+int check_delay (int ms){
+    if (object_move_delay >= ms){
+        reset_delay_counter();
+        return 1;
+    }
+    return 0;
 }
 
 /**
@@ -22,8 +37,8 @@ void user_isr(void){
  * @param ms milliseconds delay
  */
 void accurate_delay (int ms){
-    delay_counter = 0;
-    while (delay_counter < ms);
+    object_move_delay = 0;
+    while (object_move_delay < ms);
 }
 
 /** 

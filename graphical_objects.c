@@ -115,7 +115,7 @@ void generate_obstacle (){
     int i;
     uint8_t steps;
     uint8_t temparr[65][2];
-    LED_debugger(type);
+    
     switch (type)
     {
     case 0:
@@ -139,7 +139,7 @@ void generate_obstacle (){
         obst1_procedure();
         break;
     case 1:
-        put_obstacle_in_live(0, 51, obst1[0]);
+        obst1_procedure();
         //moveObjectPixels (0,5,UP);
         break;
     default:

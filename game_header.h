@@ -22,6 +22,9 @@ extern char textbuffer[4][16];
 
 extern uint8_t display_buffer[BUFFER_SIZE]; // display buffer that is accessible by any c file in the program
 
+extern int object_move_delay;
+extern int player_move_delay;
+
 uint8_t spi_send_recv(uint8_t data);
 
 void display_init(void);
@@ -56,6 +59,10 @@ int getbtns (void);
 void buffer_update ();
 
 void accurate_delay (int ms);
+
+void reset_delay_counter ();
+
+int check_delay (int ms);
 
 char read_direction (int btn_stat);
 
