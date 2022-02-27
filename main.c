@@ -98,7 +98,7 @@ int main() {
         }
         if (collision_check()) break;
     }
-
+    
     while(1);
 	return 0;
 }

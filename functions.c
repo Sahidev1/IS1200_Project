@@ -96,11 +96,11 @@ char read_direction (int btn_stat){
     switch (btn_stat)
     {
     case 1:
-        return DOWN;
+        return RIGHT; 
     case 2: 
-        return RIGHT;
+        return UP; 
     case 4:
-        return UP;
+        return DOWN; 
     case 8:
         return LEFT;
     default:
