@@ -15,9 +15,7 @@
 #define DISPLAY_TURN_OFF_VDD (PORTFSET = 0x40)
 #define DISPLAY_TURN_OFF_VBAT (PORTFSET = 0x20)
 
-#define COLUMNS 128 // columns of pixels on OLED
-#define ROWS 32 // rows of pixels on OLED
-#define PAGE_COUNT 4 // number of 8 pixel high rows
+
 
 /**
  * @brief useful delay tool that's not dependent on timers
@@ -184,11 +182,15 @@ void moveObjectPixels (int arr_index, int steps, char direction){
     case DOWN:
         break;
     case UP:
+        for (i = 0; i < LIVE_SIZE; i++){
+            if ((*live_objects_pointer)[k][i][0] == ENDOF) break;
+            (*live_objects_pointer)[k][i][0] -=steps;
+        }
         break;
     default:
         break;
     }
-    if (out_of_display_flag){
+    if (direction == LEFT && out_of_display_flag){
         disassemble_obstacle(k);
     }   
 }

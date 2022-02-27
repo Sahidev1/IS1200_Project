@@ -29,3 +29,17 @@ int random_number (int range){
     seed = (a*seed + c) % m;
     return abs(seed % range);
 }
+
+/**
+ * @brief returns pseudorandom number between [lower, upper]
+ * 
+ * @param lower lower range
+ * @param upper upper range
+ * @return int 
+ */
+int random_number_between (int lower, int upper){
+    seed = (a*seed + c) % m;
+    upper++;
+    int mod = upper - lower;
+    return abs(seed % mod) + lower;
+}

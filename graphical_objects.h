@@ -2,7 +2,7 @@
 
 #define ENDOF 255 // Used for signifying the end of valid values to read in live objects array
 #define PIXEL_REACHED_END 254 // Signifies that an obstacles pixel coordinate has reached end of OLED
-#define LIVE_SIZE 100 // size of live object array
+#define LIVE_SIZE 145 // size of live object array
 #define MAX_LIVE_OBST 3 // max live obstacles
 
 extern uint8_t player[32][2]; // Player pixel coordinates is globally is accesible to all c files

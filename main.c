@@ -80,6 +80,7 @@ int main() {
         setPlayerPixels(ON, 32,player[0]);
         //setPixels(30, 2,obst0[0]);
         setObjectPixels(ON,0);
+        
 
         render();
         //quicksleep();
@@ -87,10 +88,12 @@ int main() {
         //clearPixels(30, 2, obst0[0]);
        
         setObjectPixels (OFF, 0);
+        
 
         accurate_delay (30);
         //movePlayerPixels (1, 30, 2, 'l', obst0[0]);
         moveObjectPixels(0,1, LEFT);
+        
         if (btn_stat){
             movePlayerPixels (steps, 32, direction, player[0]);
             movePlayerPixels (steps, 9, direction, collision_sensors[0]);

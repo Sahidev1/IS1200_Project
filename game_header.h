@@ -2,6 +2,9 @@
 #include <stdint.h>
 
 #define BUFFER_SIZE 512 // Size of display buffer
+#define COLUMNS 128 // columns of pixels on OLED
+#define ROWS 32 // rows of pixels on OLED
+#define PAGE_COUNT 4 // number of 8 pixel high rows
 
 // direction definitions
 #define UP 'u'
@@ -58,8 +61,11 @@ char read_direction (int btn_stat);
 
 
 /* utility/helper functions */
+void LED_debugger (int val);
 
 int random_number (int range);
+
+int random_number_between (int lower, int upper);
 
 uint8_t pow2 (uint8_t exponent);
 

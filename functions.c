@@ -121,6 +121,10 @@ void Initialize_IO( void )
     return;
 }
 
+void LED_debugger (int val){
+    PORTE = val;
+}
+
 /**
     Helper function that calculates powers of 2
     argument N will output 2^N
