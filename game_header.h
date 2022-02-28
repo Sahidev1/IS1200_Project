@@ -35,9 +35,13 @@ void movePlayerPixels (int steps, int array_rows, char direction, uint8_t* arr);
 
 void moveObjectPixels (int arr_index, int steps, char direction);
 
+void moveLiveObjPixels (int steps, char direction);
+
 void setPixel (int on_off,int row, int column);
 
 void setObjectPixels (int ON_OFF,int live_index);
+
+void setLiveObstaclePixels (int ON_OFF);
 
 void setPlayerPixels (int ON_OFF,int array_rows, uint8_t* pixelArray);
 
@@ -63,6 +67,8 @@ void init_delays ();
 int check_obstacle_delay (int ms);
 
 int check_player_delay (int ms);
+
+int check_generator_delay (int ms);
 
 char read_direction (int btn_stat);
 

@@ -195,6 +195,16 @@ void moveObjectPixels (int arr_index, int steps, char direction){
     }   
 }
 
+void moveLiveObjPixels (int steps, char direction){
+    int * arr_p = obst_data.filled_array_indexes;
+    int i;
+    for (i = 0; i < MAX_LIVE_OBST; i++){
+        if (*(arr_p + i) == FILLED){
+            moveObjectPixels(i,steps,direction);
+        }
+    }
+}
+
 /**
  * @brief This function sets the status of 1 pixel in the display buffer
  * 
@@ -228,6 +238,16 @@ void setObjectPixels (int ON_OFF,int live_index){
     k = live_index;
     for (i = 0; i < LIVE_SIZE && (*live_obstacles_pointer)[k][i][0] != ENDOF; i++){
         setPixel(ON_OFF,(*live_obstacles_pointer)[k][i][0],(*live_obstacles_pointer)[k][i][1]);
+    }
+}
+
+void setLiveObstaclePixels (int ON_OFF){
+    int * arr_p = obst_data.filled_array_indexes;
+    int i;
+    for (i = 0; i < MAX_LIVE_OBST; i++){
+        if (*(arr_p + i) == FILLED){
+            setObjectPixels(ON_OFF, i);
+        }
     }
 }
 

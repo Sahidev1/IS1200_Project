@@ -2,6 +2,7 @@
 #include "graphical_objects.h"
 #include "game_header.h"
 
+
 void obst1_procedure();
 void obst2_procedure ();
 // Player pixel coordinates
@@ -79,6 +80,13 @@ uint8_t live_obstacles[3][LIVE_SIZE][2];
 uint8_t (*live_obstacles_pointer)[3][LIVE_SIZE][2] = &live_obstacles;
 
 obstData obst_data;
+void init_structs (){
+    int i;
+    for (i = 0; i < 3; i++){
+        obst_data.filled_array_indexes[i] = EMPTY;
+        obst_data.obstacle_type_at_array_indexes[i] = -1;
+    }
+}
 
 /**
  * @brief copies a non-live obstacle and puts it in live objects array
@@ -97,7 +105,23 @@ void put_obstacle_in_live (int k, int rows, uint8_t *obst_pointer){
         (*live_obstacles_pointer)[k][j][1] = *(obst_pointer + i*cols + 1);
         j++;
     }
-    
+}
+
+int getFreeIndex (){
+    int* array_p = &obst_data.filled_array_indexes[0];
+    int i;
+    for (i = 0; i < MAX_LIVE_OBST; i++){
+        if (*(array_p + i) == EMPTY){
+            *(array_p + i) = FILLED;
+            return i;
+        }
+    }
+    return -1;
+}
+
+void freeIndex (int index){
+    obst_data.filled_array_indexes[index] = EMPTY;
+    obst_data.obstacle_type_at_array_indexes[index] = -1;
 }
 
 /**
@@ -105,20 +129,31 @@ void put_obstacle_in_live (int k, int rows, uint8_t *obst_pointer){
  * 
  */
 void generate_obstacle (){
+    
     int type = random_number(2);
-    int i;
-    LED_debugger(type);
+    int i,k;
     switch (type)
     {
     case 0:
-        obst1_procedure();
+        k = getFreeIndex();
+        if (k != -1){
+            obst1_procedure(k);
+            
+            obst_data.obstacle_type_at_array_indexes[k] = 1;
+        }
         break;
     case 1:
-        obst2_procedure();
+        k = getFreeIndex();
+        if (k != -1){
+            obst2_procedure(k);
+            obst_data.obstacle_type_at_array_indexes[k] = 2;
+        }
         break;
     default:
         break;
     }
+    
+   
 }
 
 /**
@@ -135,7 +170,7 @@ void disassemble_obstacle (int index){
             (*live_obstacles_pointer)[k][i][j] = ENDOF;
         }
     }
-    generate_obstacle();
+    freeIndex(index);
 }
 
 /**
@@ -192,12 +227,6 @@ void init_live (){
     }
 }
 
-int vals[3] = {0,0,0};
-int vals1[3] = {-1,-1,-1};
-void init_structs (){
-    obst_data.filled_array_indexes = &vals[0];
-    obst_data.obstacle_type_at_array_indexes = &vals1[0];
-}
 
 /**
  * @brief Procedure for combining obst1lower and obst1upper into
@@ -207,7 +236,7 @@ void init_structs (){
  * length of its upper and lowers part, as well as the spacing between 
  * the two parts is randomly generated
  */
-void obst1_procedure (){
+void obst1_procedure (int live_obst_index){
     int obst1upper_size = 65;
     int obst1lower_size = 80;
     int combined_size = 145;
@@ -250,10 +279,10 @@ void obst1_procedure (){
             temparr[i][1] = ROW_COORD_OUT_OF_BOUNDS;
         }
     }
-    put_obstacle_in_live(0,145, temparr[0]);
+    put_obstacle_in_live(live_obst_index,145, temparr[0]);
 }
 
-void obst2_procedure (){
+void obst2_procedure (int live_obst_index){
     uint8_t temparr[80][2];
     int height_increase = random_number(13);
     random_number(3);
@@ -292,5 +321,5 @@ void obst2_procedure (){
         }
     }
 
-    put_obstacle_in_live(0, nr_elements, temparr[0]);
+    put_obstacle_in_live(live_obst_index, nr_elements, temparr[0]);
 }

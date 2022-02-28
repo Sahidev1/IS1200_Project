@@ -74,23 +74,26 @@ int main() {
 
     int flag = 0;
     init_live();
-    generate_obstacle();
     init_delays();
-    player_move_delay = 0;
     while (1){
         btn_stat = getbtns();
         direction = read_direction(btn_stat);
+        if (check_generator_delay(2500)){
+            generate_obstacle();
+        }
         
         setPlayerPixels(ON, 32,player[0]);
-        setObjectPixels(ON,0);
+        setLiveObstaclePixels(ON);
         
         render();
 
         setPlayerPixels(OFF, 32, player[0]);
-        setObjectPixels (OFF, 0);
+        setLiveObstaclePixels(OFF);
+        LED_debugger(*(live_obstacles_pointer[0][0][0]));
         
+
         delay = check_obstacle_delay(50);
-        if (delay) moveObjectPixels(0,1, LEFT);
+        if (delay) moveLiveObjPixels(1, LEFT);
         
         if (btn_stat && check_player_delay(20)){
             movePlayerPixels (steps, 32, direction, player[0]);

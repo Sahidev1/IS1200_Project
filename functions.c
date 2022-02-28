@@ -3,6 +3,7 @@
 #include "game_header.h"
 int obstacle_move_delay;
 int player_move_delay;
+int generator_delay;
 
 /**
  * @brief Interuptions Service Routine that handles interrupts in
@@ -11,14 +12,9 @@ int player_move_delay;
  */
 void user_isr(void){
     IFSCLR(0) = 0x100;
-    if (obstacle_move_delay == INT32_MAX){
-        obstacle_move_delay = 0;
-    }
-    if (player_move_delay == INT32_MAX){
-        player_move_delay = 0;
-    }
     obstacle_move_delay++;
     player_move_delay++;
+    generator_delay++;
 }
 
 /**
@@ -28,6 +24,15 @@ void user_isr(void){
 void init_delays(){
     obstacle_move_delay = 0;
     player_move_delay = 0;
+    generator_delay = 0;
+}
+
+int check_generator_delay (int ms){
+    if (generator_delay >= ms){
+        generator_delay = 0;
+        return 1;
+    }
+    return 0;
 }
 
 /**

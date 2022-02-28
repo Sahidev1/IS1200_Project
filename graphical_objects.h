@@ -6,9 +6,12 @@
 #define LIVE_SIZE 145 // size of live object array
 #define MAX_LIVE_OBST 3 // max live obstacles
 
+#define FILLED 1
+#define EMPTY 0
+
 typedef struct Obstacle_Data {
-    int* filled_array_indexes;
-    int* obstacle_type_at_array_indexes;
+    int filled_array_indexes[3];
+    int obstacle_type_at_array_indexes[3];
 } obstData;
 
 extern obstData obst_data;
