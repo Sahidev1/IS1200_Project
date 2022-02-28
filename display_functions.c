@@ -159,6 +159,7 @@ void movePlayerPixels (int steps, int array_rows, char direction, uint8_t* arr){
 void moveObjectPixels (int arr_index, int steps, char direction){
     int array_columns = 2;
     int i, k;
+    int limit;
     k = arr_index;
     int out_of_display_flag = 1;
     switch (direction)
@@ -180,11 +181,29 @@ void moveObjectPixels (int arr_index, int steps, char direction){
         }
         break;
     case DOWN:
-        break;
-    case UP:
+        limit = ROWS - 1;
         for (i = 0; i < LIVE_SIZE; i++){
             if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
-            (*live_obstacles_pointer)[k][i][0] -=steps;
+            if ((*live_obstacles_pointer)[k][i][0] == limit){
+                return;
+            }
+        }
+        for (i = 0; i < LIVE_SIZE; i++){
+            if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
+            (*live_obstacles_pointer)[k][i][0] += steps;
+        }
+        break;
+    case UP:
+        limit = 0;
+        for (i = 0; i < LIVE_SIZE; i++){
+            if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
+            if ((*live_obstacles_pointer)[k][i][0] == limit){
+                return;
+            }
+        }
+        for (i = 0; i < LIVE_SIZE; i++){
+            if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
+            (*live_obstacles_pointer)[k][i][0] -= steps;
         }
         break;
     default:

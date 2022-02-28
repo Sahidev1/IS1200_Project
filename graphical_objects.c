@@ -130,11 +130,19 @@ void freeIndex (int index){
  */
 void generate_obstacle (){
     
-    int type = random_number(2);
+    int type = random_number(3);
     int i,k;
     switch (type)
     {
     case 0:
+        k = getFreeIndex();
+        if (k != -1){
+            put_obstacle_in_live(k, 30, obst0[0]);
+            
+            obst_data.obstacle_type_at_array_indexes[k] = 0;
+        }
+        break;
+    case 1:
         k = getFreeIndex();
         if (k != -1){
             obst1_procedure(k);
@@ -142,7 +150,7 @@ void generate_obstacle (){
             obst_data.obstacle_type_at_array_indexes[k] = 1;
         }
         break;
-    case 1:
+    case 2:
         k = getFreeIndex();
         if (k != -1){
             obst2_procedure(k);
@@ -285,8 +293,7 @@ void obst1_procedure (int live_obst_index){
 void obst2_procedure (int live_obst_index){
     uint8_t temparr[80][2];
     int height_increase = random_number(13);
-    random_number(3);
-    int increase_flag = height_increase;
+    //random_number(3);
     int nr_elements = 20;
     int i,j,k;
 
@@ -313,13 +320,13 @@ void obst2_procedure (int live_obst_index){
     }
     row++;
 
-    if (increase_flag){
-        for (j = col1 + 1; j < col2; j++){
-            temparr[k][0] = row;
-            temparr[k++][1] = j;
-            nr_elements++;
-        }
+    
+    for (j = col1 + 1; j < col2; j++){
+        temparr[k][0] = row;
+        temparr[k++][1] = j;
+        nr_elements++;
     }
+    
 
     put_obstacle_in_live(live_obst_index, nr_elements, temparr[0]);
 }

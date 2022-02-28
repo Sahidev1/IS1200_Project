@@ -89,7 +89,7 @@ int main() {
 
         setPlayerPixels(OFF, 32, player[0]);
         setLiveObstaclePixels(OFF);
-        LED_debugger(*(live_obstacles_pointer[0][0][0]));
+        
         
 
         delay = check_obstacle_delay(50);
