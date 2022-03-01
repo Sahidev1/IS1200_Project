@@ -121,6 +121,7 @@ void move_up_down_obst2 (){
             limit_status = obst_data.obst2_limit_value[i];
             if (limit_status == 0){
                 moveObjectPixels(i, 1, DOWN);
+                
             }
             else {
                 moveObjectPixels(i, 1, UP);

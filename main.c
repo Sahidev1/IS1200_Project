@@ -78,7 +78,7 @@ int main() {
     while (1){
         btn_stat = getbtns();
         direction = read_direction(btn_stat);
-        if (check_generator_delay(2500)){
+        if (check_generator_delay(3200)){
             generate_obstacle();
         }
         
@@ -90,7 +90,7 @@ int main() {
         setPlayerPixels(OFF, 32, player[0]);
         setLiveObstaclePixels(OFF);
         
-        if (check_obst2_delay(80)){
+        if (check_obst2_delay(120)){
             if (is_there_obst2_live()){
                 move_up_down_obst2();
             }
