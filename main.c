@@ -91,14 +91,17 @@ int main() {
         setLiveObstaclePixels(OFF);
         
         if (check_obst2_delay(120)){
-            if (is_there_obst2_live()){
-                move_up_down_obst2();
+            if (is_there_obstX_live(2)){
+                move_up_down_obstX(2);
+            }
+            if (is_there_obstX_live(0)){
+                move_up_down_obstX(0);
             }
         }
         
-
-        delay = check_obstacle_delay(50);
-        if (delay) moveLiveObjPixels(1, LEFT);
+        if (check_obstacle_delay(50)){
+            moveLiveObjPixels(1, LEFT);
+        }
         
         if (btn_stat && check_player_delay(20)){
             movePlayerPixels (steps, 32, direction, player[0]);

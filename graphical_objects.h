@@ -13,6 +13,7 @@ typedef struct Obstacle_Data {
     int filled_array_indexes[3];
     int obstacle_type_at_array_indexes[3];
     int obst2_limit_value[3];
+    int obst0_limit_value[3];
 } obstData;
 
 extern obstData obst_data;
@@ -25,13 +26,13 @@ void init_live ();
 
 void generate_obstacle();
 
-int is_there_obst2_live();
+int is_there_obstX_live(int obstnr);
 
-void move_up_down_obst2 ();
+void move_up_down_obstX (int obstnr);
 
-void update_limit_obst2 (int index, int limit);
+void update_limit_obstX (int obstnr, int index, int limit);
 
-int get_limit_of_obst2 (int index);
+int get_limit_of_obstX (int obstnr, int index);
 
 int collision_check ();
 

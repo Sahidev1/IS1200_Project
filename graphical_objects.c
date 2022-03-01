@@ -23,13 +23,17 @@ uint8_t collision_sensors[9][2] = {{11,2},{18,2},{12,6},{16,6},{11,10},
  *  obstacle are initialized as
 **/
 
-uint8_t obst0[30][2] = {{30,129},{31,129},{27,130},{28,130},{29,130},
-{24,131},{25,131},{26,131},{21,132},{22,132},
-{23,132},{18,133},{19,133},{20,133},{16,134},
-{17,134},{18,135},{19,135},{20,135},{21,136},
-{22,136},{23,136},{24,137},{25,137},{26,137},
-{27,138},{28,138},{29,138},{30,139},{31,139}
-};
+uint8_t obst0[47][2] = {{23,131},{27,131},{22,132},{24,132},{26,132},
+{28,132},{21,133},{25,133},{29,133},{20,134},
+{29,134},{20,135},{23,135},{29,135},{19,136},
+{29,136},{19,137},{28,137},{19,138},{20,138},
+{28,138},{20,139},{27,139},{20,140},{27,140},
+{21,141},{26,141},{22,142},{24,142},{25,142},
+{21,143},{25,143},{20,144},{26,144},{19,145},
+{22,145},{23,145},{27,145},{19,146},{21,146},
+{24,146},{27,146},{19,147},{20,147},{25,147},
+{26,147},{27,147}};
+
 
 uint8_t obst1lower[80][2] = {{29,129},{30,129},{31,129},{32,129},{33,129},
 {34,129},{35,129},{36,129},{37,129},{38,129},
@@ -86,16 +90,17 @@ void init_structs (){
         obst_data.filled_array_indexes[i] = EMPTY;
         obst_data.obstacle_type_at_array_indexes[i] = -1;
         obst_data.obst2_limit_value[i] = -1;
+        obst_data.obst0_limit_value[i] = -1;
     }
 }
 
-int is_there_obst2_live(){
+int is_there_obstX_live(int obstnr){
     int* is_filled_p = obst_data.filled_array_indexes;
     int* type_p = obst_data.obstacle_type_at_array_indexes;
     int i;
     for (i = 0; i < MAX_LIVE_OBST; i++){
         if (*(is_filled_p + i) == FILLED){
-            if (*(type_p + i) == 2){
+            if (*(type_p + i) == obstnr){
                 return 1;
             }
         }
@@ -103,22 +108,35 @@ int is_there_obst2_live(){
     return 0;
 }
 
-void update_limit_obst2 (int index, int limit){
-    obst_data.obst2_limit_value[index] = limit;
+void update_limit_obstX (int obstnr, int index, int limit){
+    if (obstnr == 2){
+        obst_data.obst2_limit_value[index] = limit;
+    }
+    if (obstnr == 0){
+        obst_data.obst0_limit_value[index] = limit;
+    }
 }
 
-int get_limit_of_obst2 (int index){
-    return obst_data.obst2_limit_value[index];
+int get_limit_of_obstX (int obstnr, int index){
+    if (obstnr == 2){
+        return obst_data.obst2_limit_value[index];
+    }
+    return obst_data.obst0_limit_value[index];
 }
 
-void move_up_down_obst2 (){
+void move_up_down_obstX (int obstnr){
     int limit_status;
     int* is_filled_p = obst_data.filled_array_indexes;
     int* type_p = obst_data.obstacle_type_at_array_indexes;
     int i;
     for (i = 0; i < MAX_LIVE_OBST; i++){
-        if (*(is_filled_p + i) == FILLED && *(type_p + i) == 2){
-            limit_status = obst_data.obst2_limit_value[i];
+        if (*(is_filled_p + i) == FILLED && *(type_p + i) == obstnr){
+            if (obstnr == 2){
+                limit_status = obst_data.obst2_limit_value[i];
+            }
+            if (obstnr == 0){
+                limit_status = obst_data.obst0_limit_value[i];
+            }
             if (limit_status == 0){
                 moveObjectPixels(i, 1, DOWN);
                 
@@ -179,7 +197,7 @@ void generate_obstacle (){
     case 0:
         k = getFreeIndex();
         if (k != -1){
-            put_obstacle_in_live(k, 30, obst0[0]);
+            put_obstacle_in_live(k, 47, obst0[0]);
             
             obst_data.obstacle_type_at_array_indexes[k] = 0;
         }

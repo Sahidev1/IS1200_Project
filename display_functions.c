@@ -185,7 +185,12 @@ void moveObjectPixels (int arr_index, int steps, char direction){
         for (i = 0; i < LIVE_SIZE; i++){
             if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
             if ((*live_obstacles_pointer)[k][i][0] == limit){
-                update_limit_obst2 (k, limit);
+                if (obst_data.obstacle_type_at_array_indexes[k] == 2){
+                    update_limit_obstX (2, k, limit);
+                }
+                if (obst_data.obstacle_type_at_array_indexes[k] == 0){
+                    update_limit_obstX (0, k, limit);
+                }
                 return;
             }
         }
@@ -199,7 +204,12 @@ void moveObjectPixels (int arr_index, int steps, char direction){
         for (i = 0; i < LIVE_SIZE; i++){
             if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
             if ((*live_obstacles_pointer)[k][i][0] == limit){
-                update_limit_obst2 (k, limit);
+                if (obst_data.obstacle_type_at_array_indexes[k] == 2){
+                    update_limit_obstX (2, k, limit);
+                }
+                if (obst_data.obstacle_type_at_array_indexes[k] == 0){
+                    update_limit_obstX (0, k, limit);
+                }
                 return;
             }
         }
