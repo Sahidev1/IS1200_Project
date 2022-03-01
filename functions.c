@@ -4,6 +4,7 @@
 int obstacle_move_delay;
 int player_move_delay;
 int generator_delay;
+int obst2_up_down_delay;
 
 /**
  * @brief Interuptions Service Routine that handles interrupts in
@@ -15,6 +16,7 @@ void user_isr(void){
     obstacle_move_delay++;
     player_move_delay++;
     generator_delay++;
+    obst2_up_down_delay++;
 }
 
 /**
@@ -22,9 +24,18 @@ void user_isr(void){
  * 
  */
 void init_delays(){
+    obst2_up_down_delay = 0;
     obstacle_move_delay = 0;
     player_move_delay = 0;
     generator_delay = 0;
+}
+
+int check_obst2_delay (int ms){
+    if (obst2_up_down_delay >= ms){
+        obst2_up_down_delay = 0;
+        return 1;
+    }
+    return 0;
 }
 
 int check_generator_delay (int ms){

@@ -90,6 +90,11 @@ int main() {
         setPlayerPixels(OFF, 32, player[0]);
         setLiveObstaclePixels(OFF);
         
+        if (check_obst2_delay(80)){
+            if (is_there_obst2_live()){
+                move_up_down_obst2();
+            }
+        }
         
 
         delay = check_obstacle_delay(50);

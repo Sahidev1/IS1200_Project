@@ -185,6 +185,7 @@ void moveObjectPixels (int arr_index, int steps, char direction){
         for (i = 0; i < LIVE_SIZE; i++){
             if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
             if ((*live_obstacles_pointer)[k][i][0] == limit){
+                update_limit_obst2 (i, limit);
                 return;
             }
         }
@@ -198,6 +199,7 @@ void moveObjectPixels (int arr_index, int steps, char direction){
         for (i = 0; i < LIVE_SIZE; i++){
             if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
             if ((*live_obstacles_pointer)[k][i][0] == limit){
+                update_limit_obst2 (i, limit);
                 return;
             }
         }

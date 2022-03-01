@@ -12,6 +12,7 @@
 typedef struct Obstacle_Data {
     int filled_array_indexes[3];
     int obstacle_type_at_array_indexes[3];
+    int obst2_limit_value[3];
 } obstData;
 
 extern obstData obst_data;
@@ -23,6 +24,14 @@ extern uint8_t (*live_obstacles_pointer)[MAX_LIVE_OBST][LIVE_SIZE][2]; // live o
 void init_live ();
 
 void generate_obstacle();
+
+int is_there_obst2_live();
+
+void move_up_down_obst2 ();
+
+void update_limit_obst2 (int index, int limit);
+
+int get_limit_of_obst2 (int index);
 
 int collision_check ();
 

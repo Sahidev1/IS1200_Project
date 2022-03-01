@@ -70,6 +70,8 @@ int check_player_delay (int ms);
 
 int check_generator_delay (int ms);
 
+int check_obst2_delay (int ms);
+
 char read_direction (int btn_stat);
 
 

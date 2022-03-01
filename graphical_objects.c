@@ -85,6 +85,47 @@ void init_structs (){
     for (i = 0; i < 3; i++){
         obst_data.filled_array_indexes[i] = EMPTY;
         obst_data.obstacle_type_at_array_indexes[i] = -1;
+        obst_data.obst2_limit_value[i] = -1;
+    }
+}
+
+int is_there_obst2_live(){
+    int* is_filled_p = obst_data.filled_array_indexes;
+    int* type_p = obst_data.obstacle_type_at_array_indexes;
+    int i;
+    for (i = 0; i < MAX_LIVE_OBST; i++){
+        if (*(is_filled_p + i) == FILLED){
+            if (*(type_p + i) == 2){
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+void update_limit_obst2 (int index, int limit){
+    obst_data.obst2_limit_value[index] = limit;
+}
+
+int get_limit_of_obst2 (int index){
+    return obst_data.obst2_limit_value[index];
+}
+
+void move_up_down_obst2 (){
+    int limit_status;
+    int* is_filled_p = obst_data.filled_array_indexes;
+    int* type_p = obst_data.obstacle_type_at_array_indexes;
+    int i;
+    for (i = 0; i < MAX_LIVE_OBST; i++){
+        if (*(is_filled_p + i) == FILLED && *(type_p + i) == 2){
+            limit_status = obst_data.obst2_limit_value[i];
+            if (limit_status == 0){
+                moveObjectPixels(i, 1, DOWN);
+            }
+            else {
+                moveObjectPixels(i, 1, UP);
+            }
+        }
     }
 }
 
@@ -320,13 +361,12 @@ void obst2_procedure (int live_obst_index){
     }
     row++;
 
-    
     for (j = col1 + 1; j < col2; j++){
         temparr[k][0] = row;
         temparr[k++][1] = j;
         nr_elements++;
     }
     
-
+    obst_data.obst2_limit_value[live_obst_index] = 5; //arbitrary value
     put_obstacle_in_live(live_obst_index, nr_elements, temparr[0]);
 }
