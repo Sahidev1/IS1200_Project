@@ -181,7 +181,7 @@ void moveObjectPixels (int arr_index, int steps, char direction){
         }
         break;
     case DOWN:
-        limit = ROWS - 1;
+        limit = ROWS - 2;
         for (i = 0; i < LIVE_SIZE; i++){
             if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
             if ((*live_obstacles_pointer)[k][i][0] == limit){
@@ -200,7 +200,7 @@ void moveObjectPixels (int arr_index, int steps, char direction){
         }
         break;
     case UP:
-        limit = 0;
+        limit = 1;
         for (i = 0; i < LIVE_SIZE; i++){
             if ((*live_obstacles_pointer)[k][i][0] == ENDOF) break;
             if ((*live_obstacles_pointer)[k][i][0] == limit){
@@ -254,6 +254,13 @@ void setPixel (int on_off,int row, int column){
     }
     else {
         display_buffer[array_pos] = display_buffer[array_pos] & (~pow2(row_byte));
+    }
+}
+
+void set_frame_pixels (int ON_OFF){
+    int i;
+    for (i = 0; i < 316; i++){
+        setPixel (ON_OFF, frame[i][0], frame[i][1]);
     }
 }
 

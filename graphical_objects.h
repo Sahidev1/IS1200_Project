@@ -31,7 +31,7 @@ extern obstacle0_state obstacle0_status;
 extern obstData obst_data;
 extern uint8_t player[32][2]; // Player pixel coordinates is globally is accesible to all c files
 extern uint8_t collision_sensors[9][2];
-
+extern uint8_t frame[316][2];
 extern uint8_t (*live_obstacles_pointer)[MAX_LIVE_OBST][LIVE_SIZE][2]; // live object array pointer is accesible to all c files
 
 void init_live ();

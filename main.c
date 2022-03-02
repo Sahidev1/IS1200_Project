@@ -7,14 +7,6 @@ uint8_t display_buffer[BUFFER_SIZE];
 int btn_stat = 0;
 
 
-typedef struct Gfo_state
-{
-    uint8_t *gfo_pointers[10];
-}gfo_state;
-
-void gen_obstacle (int obst_nr){
-
-}
 
 int main() {
     /*
@@ -83,11 +75,13 @@ int main() {
         
         setPlayerPixels(ON, 32,player[0]);
         setLiveObstaclePixels(ON);
+        set_frame_pixels(ON);
         
         render();
 
         setPlayerPixels(OFF, 32, player[0]);
         setLiveObstaclePixels(OFF);
+        set_frame_pixels(OFF);
         
         if (check_obst2_delay(100)){
             if (is_there_obstX_live(2)){
@@ -134,7 +128,7 @@ int main() {
             movePlayerPixels (steps, 32, direction, player[0]);
             movePlayerPixels (steps, 9, direction, collision_sensors[0]);
         }
-        if (collision_check()) break;
+        //if (collision_check()) break;
     }
     
     while(1);

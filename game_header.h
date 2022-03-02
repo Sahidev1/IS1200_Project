@@ -45,6 +45,8 @@ void setLiveObstaclePixels (int ON_OFF);
 
 void setPlayerPixels (int ON_OFF,int array_rows, uint8_t* pixelArray);
 
+void set_frame_pixels (int ON_OFF);
+
 void clearDisplay ();
 
 void quicksleep();
