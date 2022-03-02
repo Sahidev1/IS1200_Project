@@ -9,6 +9,7 @@
 
 // Initializing seed value
 int seed = 345197; 
+int obstacle_gen_seed = 1719021017;
 
 // Function that returns absolute value of an integer
 int abs (int val){
@@ -16,6 +17,11 @@ int abs (int val){
     val = val ^ tmp; 
     val = val + (tmp & 1);
     return val;
+}
+
+int obstacle_gen_rand (int range){
+    obstacle_gen_seed = (a*obstacle_gen_seed + c) % m;
+    return abs (obstacle_gen_seed % range);
 }
 
 

@@ -80,6 +80,8 @@ void LED_debugger (int val);
 
 int random_number (int range);
 
+int obstacle_gen_rand (int range);
+
 int random_number_between (int lower, int upper);
 
 uint8_t pow2 (uint8_t exponent);

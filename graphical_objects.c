@@ -190,7 +190,7 @@ void freeIndex (int index){
  */
 void generate_obstacle (){
     
-    int type = random_number(3);
+    int type = obstacle_gen_rand(MAX_LIVE_OBST);
     int i,k;
     switch (type)
     {

@@ -107,7 +107,7 @@ int main() {
             movePlayerPixels (steps, 32, direction, player[0]);
             movePlayerPixels (steps, 9, direction, collision_sensors[0]);
         }
-        if (collision_check()) break;
+        //if (collision_check()) break;
     }
     
     while(1);
