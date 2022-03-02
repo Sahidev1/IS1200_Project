@@ -1,6 +1,5 @@
 #include <pic32mx.h>
 #include "game_header.h"
-#include <stdlib.h>
 #include "graphical_objects.h"
 
 char textbuffer[4][16];
@@ -90,24 +89,52 @@ int main() {
         setPlayerPixels(OFF, 32, player[0]);
         setLiveObstaclePixels(OFF);
         
-        if (check_obst2_delay(120)){
+        if (check_obst2_delay(100)){
             if (is_there_obstX_live(2)){
                 move_up_down_obstX(2);
             }
-            if (is_there_obstX_live(0)){
+            if (is_there_obstX_live(0) && !obstacle0_status.boost_enabled){
                 move_up_down_obstX(0);
             }
         }
         
-        if (check_obstacle_delay(50)){
+        int obst_delay = check_obstacle_delay(50);
+        if (obst_delay){
             moveLiveObjPixels(1, LEFT);
+            if (is_there_obstX_live(0) && !obstacle0_status.boost_enabled){
+                obstacle0_status.iterator++;
+            }
+        }
+
+        if (is_there_obstX_live(0) && obst_delay){
+            if (!obstacle0_status.boost_enabled && !obstacle0_status.boosted_once){
+                if (obstacle0_status.iterator >= obstacle0_status.boost_disable_steps){
+                    obstacle0_status.boost_enabled = true;
+                    obstacle0_status.iterator = 0;
+                    set_obst0_boost_delay(obstacle0_status.timer_boost_enabled);
+                }
+            }
+            else {
+                if (obstacle0_status.iterator >= obstacle0_status.boost_enable_steps){
+                    obstacle0_status.boost_enabled = false;
+                    obstacle0_status.boosted_once = true;
+                    obstacle0_status.iterator = 0;
+                }
+            }
+        }
+        boolean part1 = is_there_obstX_live(0) && !obstacle0_status.boosted_once;
+        boolean part2 = obstacle0_status.boost_enabled && check_obst0_boost_delay();
+        if (part1 && part2){
+            int index = index_of_obst0();
+            moveObjectPixels (index,1, LEFT);
+            obstacle0_status.iterator++;
         }
         
         if (btn_stat && check_player_delay(20)){
             movePlayerPixels (steps, 32, direction, player[0]);
             movePlayerPixels (steps, 9, direction, collision_sensors[0]);
         }
-        //if (collision_check()) break;
+        if (collision_check()) break;
     }
     
     while(1);

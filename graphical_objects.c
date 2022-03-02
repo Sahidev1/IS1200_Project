@@ -2,7 +2,7 @@
 #include "graphical_objects.h"
 #include "game_header.h"
 
-
+void obst0_procedure();
 void obst1_procedure();
 void obst2_procedure ();
 // Player pixel coordinates
@@ -84,6 +84,7 @@ uint8_t live_obstacles[3][LIVE_SIZE][2];
 uint8_t (*live_obstacles_pointer)[3][LIVE_SIZE][2] = &live_obstacles;
 
 obstData obst_data;
+obstacle0_state obstacle0_status;
 void init_structs (){
     int i;
     for (i = 0; i < 3; i++){
@@ -122,6 +123,20 @@ int get_limit_of_obstX (int obstnr, int index){
         return obst_data.obst2_limit_value[index];
     }
     return obst_data.obst0_limit_value[index];
+}
+
+int index_of_obst0 (){
+    int* is_filled_p = obst_data.filled_array_indexes;
+    int* type_p = obst_data.obstacle_type_at_array_indexes;
+    int i;
+    if (is_there_obstX_live(0)){
+        for (i = 0; i < MAX_LIVE_OBST; i++){
+            if (*(is_filled_p + i) && *(type_p + i) == 0){
+                return i;
+            }
+        }
+    }
+    return -1;
 }
 
 void move_up_down_obstX (int obstnr){
@@ -189,15 +204,20 @@ void freeIndex (int index){
  * 
  */
 void generate_obstacle (){
-    
-    int type = obstacle_gen_rand(MAX_LIVE_OBST);
+    int type;
+    if (is_there_obstX_live(0)){
+        type = obstacle_gen_rand(2) + 1;
+    }
+    else {
+        type = obstacle_gen_rand(MAX_LIVE_OBST);
+    }
     int i,k;
     switch (type)
     {
     case 0:
         k = getFreeIndex();
         if (k != -1){
-            put_obstacle_in_live(k, 47, obst0[0]);
+            obst0_procedure(k);
             
             obst_data.obstacle_type_at_array_indexes[k] = 0;
         }
@@ -388,4 +408,16 @@ void obst2_procedure (int live_obst_index){
     
     obst_data.obst2_limit_value[live_obst_index] = 5; //arbitrary value
     put_obstacle_in_live(live_obst_index, nr_elements, temparr[0]);
+}
+
+void obst0_procedure (int live_obst_index){
+    obstacle0_status.boost_enabled = false;
+    obstacle0_status.boosted_once = false;
+    obstacle0_status.boost_enable_steps = random_number_between (20, 60);
+    obstacle0_status.boost_disable_steps = random_number_between (25, 80);
+    obstacle0_status.timer_boost_enabled = random_number_between (15, 50);
+    //set_obst0_boost_delay(obstacle0_status.timer_boost_enabled);
+    obstacle0_status.iterator = 0;
+
+    put_obstacle_in_live(live_obst_index, 47, obst0[0]);
 }

@@ -9,6 +9,8 @@
 #define FILLED 1
 #define EMPTY 0
 
+typedef enum {false, true} boolean;
+
 typedef struct Obstacle_Data {
     int filled_array_indexes[3];
     int obstacle_type_at_array_indexes[3];
@@ -16,6 +18,16 @@ typedef struct Obstacle_Data {
     int obst0_limit_value[3];
 } obstData;
 
+typedef struct Obstacle0_state {
+    boolean boost_enabled;
+    boolean boosted_once;
+    int timer_boost_enabled;
+    int boost_enable_steps;
+    int boost_disable_steps;
+    int iterator;
+} obstacle0_state;
+
+extern obstacle0_state obstacle0_status;
 extern obstData obst_data;
 extern uint8_t player[32][2]; // Player pixel coordinates is globally is accesible to all c files
 extern uint8_t collision_sensors[9][2];
@@ -33,6 +45,8 @@ void move_up_down_obstX (int obstnr);
 void update_limit_obstX (int obstnr, int index, int limit);
 
 int get_limit_of_obstX (int obstnr, int index);
+
+int index_of_obst0 ();
 
 int collision_check ();
 

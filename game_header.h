@@ -72,6 +72,10 @@ int check_generator_delay (int ms);
 
 int check_obst2_delay (int ms);
 
+void set_obst0_boost_delay (int ms);
+
+int check_obst0_boost_delay ();
+
 char read_direction (int btn_stat);
 
 
