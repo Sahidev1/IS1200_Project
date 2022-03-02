@@ -117,21 +117,21 @@ void movePlayerPixels (int steps, int array_rows, char direction, uint8_t* arr){
     {
     case RIGHT:
             offset = 1;
-            limit = COLUMNS - 1;
+            limit = COLUMNS - 2;
         break;
     case LEFT: 
             offset = 1;
             steps = -1 * steps;
-            limit = 0;
+            limit = 1;
         break;
     case UP:
             offset = 0;
             steps = -1 * steps;  
-            limit = 0;
+            limit = 1;
         break;
     case DOWN:
             offset = 0;
-            limit = ROWS - 1;
+            limit = ROWS - 2;
         break;
     default:
         break;
@@ -236,6 +236,20 @@ void moveLiveObjPixels (int steps, char direction){
     }
 }
 
+void setFramePixel (int on_off,int row, int column){
+    if (row >= 32 || column >= 128) return;
+    int page = row / 8;
+    uint8_t row_byte = ((uint8_t)row) % 8;
+    int array_pos = page*128 + column;
+
+    if (on_off == ON){
+        display_buffer[array_pos] = display_buffer[array_pos] | pow2(row_byte);
+    }
+    else {
+        display_buffer[array_pos] = display_buffer[array_pos] & (~pow2(row_byte));
+    }
+}
+
 /**
  * @brief This function sets the status of 1 pixel in the display buffer
  * 
@@ -244,7 +258,7 @@ void moveLiveObjPixels (int steps, char direction){
  * @param column the column of the pixel on the oled
  */
 void setPixel (int on_off,int row, int column){
-    if (row >= 32 || column >= 128) return;
+    if (row >= 31 || column >= 127 || row == 0 || column == 0) return;
     int page = row / 8;
     uint8_t row_byte = ((uint8_t)row) % 8;
     int array_pos = page*128 + column;
@@ -260,7 +274,7 @@ void setPixel (int on_off,int row, int column){
 void set_frame_pixels (int ON_OFF){
     int i;
     for (i = 0; i < 316; i++){
-        setPixel (ON_OFF, frame[i][0], frame[i][1]);
+        setFramePixel(ON_OFF, frame[i][0], frame[i][1]);
     }
 }
 
