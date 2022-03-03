@@ -7,6 +7,7 @@ int generator_delay;
 int obst2_up_down_delay;
 int obst0_up_down_delay;
 int obst0_boost_delay;
+int accurate_delay_val;
 
 int obst0_count_up_to;
 /**
@@ -22,6 +23,7 @@ void user_isr(void){
     obst0_up_down_delay++;
     obst2_up_down_delay++;
     obst0_boost_delay++;
+    accurate_delay_val++;
 }
 
 /**
@@ -35,6 +37,7 @@ void init_delays(){
     generator_delay = 0;
     obst0_boost_delay = 0;
     obst0_up_down_delay = 0;
+    accurate_delay_val = 0;
 }
 
 void set_obst0_boost_delay (int ms){
@@ -109,7 +112,7 @@ int check_obstacle_delay (int ms){
  * @param ms milliseconds delay
  */
 void accurate_delay (int ms){
-    obstacle_move_delay = 0;
+    accurate_delay_val = 0;
     while (obstacle_move_delay < ms);
 }
 

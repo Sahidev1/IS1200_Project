@@ -24,13 +24,14 @@ typedef struct Game_state {
     int obst2_up_down_delay;
     int obst0_up_down_delay;
     int live_obstacle_delay;
-    Player player;
+    Player player_status;
 }game_state;
 
 extern game_state game_state_;
 
 /* Display related */
 extern char textbuffer[4][16];
+extern const uint8_t const font[128*8];
 
 extern uint8_t display_buffer[BUFFER_SIZE]; // display buffer that is accessible by any c file in the program
 
@@ -65,6 +66,10 @@ void clearDisplay ();
 
 void quicksleep();
 
+void display_string(int line, char *s);
+
+void display_update(void);
+
 
 
 /* IO/Interrupt related */
@@ -75,6 +80,8 @@ void Initialize_IO( void );
 void user_isr(void);
 
 int getbtns (void);
+
+int getsw (void);
 
 void accurate_delay (int ms);
 
@@ -98,7 +105,10 @@ char read_direction (int btn_stat);
 
 /* game state */
 void init_game_state ();
+
 void increase_score();
+
+char* score_string_gen (int score);
 
 
 /* utility/helper functions */

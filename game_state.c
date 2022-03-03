@@ -3,6 +3,7 @@
 
 game_state game_state_;
 int initial_up_down0, initial_up_down2, initial_live_delay;
+char score_string[14];
 
 void init_game_state (){
     game_state_.current_score = 0;
@@ -11,7 +12,7 @@ void init_game_state (){
     game_state_.obst2_up_down_delay = 100;
     game_state_.live_obstacle_delay = 50;
 
-    game_state_.player = ALIVE;
+    game_state_.player_status = ALIVE;
 
     initial_up_down0 = game_state_.obst0_up_down_delay;
     initial_up_down2 = game_state_.obst2_up_down_delay;
@@ -64,4 +65,42 @@ void increase_score (){
     game_state_.current_score++;
     update_game_params();
 }
+
+char* score_string_gen (int score){
+    score_string[0] = 'S';
+    score_string[1] = 'c';
+    score_string[2] = 'o';
+    score_string[3] = 'r';
+    score_string[4] = 'e';
+    score_string[5] = ':';
+    score_string[6] = 32;
+
+    if (score >= 10000){
+        score = 9999;
+    }
+
+    int i = 7;
+    //LED_debugger(score);
+    if (score > 0){
+        int temparr[5] = {-1,-1,-1,-1,-1};
+        int nr_digits = 0;
+        while (score != 0 && nr_digits < 5){
+            temparr[nr_digits++] = score % 10;
+            score /= 10;
+        }
+        while (temparr[nr_digits] == -1)nr_digits--;
+        int j;
+        for (j = nr_digits; j >= 0; j--){
+            score_string[i++] = 48 + temparr[j];
+        }
+    }
+    else {
+        score_string[7] = 48;
+        score_string[8] = 0;
+        return score_string;
+    }
+    score_string[i] = 0;
+    return score_string;
+}
+
 

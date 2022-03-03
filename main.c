@@ -2,7 +2,6 @@
 #include "game_header.h"
 #include "graphical_objects.h"
 
-char textbuffer[4][16];
 uint8_t display_buffer[BUFFER_SIZE];
 int btn_stat = 0;
 
@@ -58,31 +57,44 @@ int main() {
     int direction;
     int steps = 1;
     int btn_stat;
-    
+    int switch_stat = 0;
+
     int delay;
-
-    game_state_.current_score = 0;
     
-
+    boolean first_run = true;
+    boolean restart = false;
     int flag = 0;
     init_live();
     init_delays();
     init_game_state();
+    init_structs();
     set_frame_pixels(ON);
 
     while(true){
-        set_intro_pixels(ON);
-        render ();
-        accurate_delay (5000);
-        set_intro_pixels(OFF);
-        render ();
-        while (game_state_.player){
+        if (first_run){
+            set_intro_pixels(ON);
+            render ();
+            accurate_delay (5000);
+            set_intro_pixels(OFF);
+            render (); 
+            first_run = false; 
+        }
+       
+
+        if (restart){
+            init_live();
+            init_delays();
+            init_game_state();
+            init_structs();
+            set_frame_pixels(ON);
+        }
+        while (game_state_.player_status){
             btn_stat = getbtns();
             direction = read_direction(btn_stat);
             if (check_generator_delay(game_state_.gen_delay)){
                 generate_obstacle();
             }
-            LED_debugger (game_state_.current_score);
+            
             
             setPlayerPixels(ON, 32,player[0]);
             setLiveObstaclePixels(ON);
@@ -141,10 +153,31 @@ int main() {
                 movePlayerPixels (steps, 32, direction, player[0]);
                 movePlayerPixels (steps, 9, direction, collision_sensors[0]);
             }
-            if (collision_check()) game_state_.player = DEAD;
+            if (collision_check()){ 
+                game_state_.player_status = DEAD;
+                break;
+            }
+            LED_debugger(game_state_.current_score);
+        }
+        if (!game_state_.player_status){
+            accurate_delay (500);
+            clearDisplay();
+            char * score_str = score_string_gen(game_state_.current_score);
+            display_string (0, score_str);
+            display_string (2,"Flip a switch");
+            display_string (3, "to restart");
+            display_update(); 
+
+            while (!switch_stat){
+                switch_stat = getsw(); 
+            }
+            switch_stat = 0;
+            restart = true;
+            reset_player();
+            clearDisplay();
         }
     }
     
-    while(1);
+
 	return 0;
 }
