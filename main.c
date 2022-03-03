@@ -49,25 +49,21 @@ int main() {
 	SPI2CONSET = 0x8000;
 
     display_init();
-    quicksleep(100000);
-    clearDisplay();
-    quicksleep(1000);
     Initialize_IO();
     
     int direction;
     int steps = 1;
     int btn_stat;
     int switch_stat = 0;
-
     int delay;
     
     boolean first_run = true;
     boolean restart = false;
-    int flag = 0;
+
     init_live();
     init_delays();
     init_game_state();
-    init_structs();
+    init_obstacle_Data();
     set_frame_pixels(ON);
 
     while(true){
@@ -80,21 +76,20 @@ int main() {
             first_run = false; 
         }
        
-
         if (restart){
             init_live();
             init_delays();
             init_game_state();
-            init_structs();
+            init_obstacle_Data();
             set_frame_pixels(ON);
         }
+
         while (game_state_.player_status){
             btn_stat = getbtns();
             direction = read_direction(btn_stat);
             if (check_generator_delay(game_state_.gen_delay)){
                 generate_obstacle();
             }
-            
             
             setPlayerPixels(ON, 32,player[0]);
             setLiveObstaclePixels(ON);
@@ -104,7 +99,6 @@ int main() {
             setPlayerPixels(OFF, 32, player[0]);
             setLiveObstaclePixels(OFF);
         
-            
             if (check_obst2_delay(game_state_.obst2_up_down_delay)){
                 if (is_there_obstX_live(2)){
                     move_up_down_obstX(2);
@@ -141,6 +135,7 @@ int main() {
                     }
                 }
             }
+
             boolean part1 = is_there_obstX_live(0) && !obstacle0_status.boosted_once;
             boolean part2 = obstacle0_status.boost_enabled && check_obst0_boost_delay();
             if (part1 && part2){
@@ -153,12 +148,15 @@ int main() {
                 movePlayerPixels (steps, 32, direction, player[0]);
                 movePlayerPixels (steps, 9, direction, collision_sensors[0]);
             }
+            
             if (collision_check()){ 
                 game_state_.player_status = DEAD;
                 break;
             }
-            LED_debugger(game_state_.current_score);
+            
+            LED_debugger(game_state_.current_score); // Used here to display score on LEDS
         }
+
         if (!game_state_.player_status){
             accurate_delay (500);
             clearDisplay();
@@ -177,7 +175,5 @@ int main() {
             clearDisplay();
         }
     }
-    
-
 	return 0;
 }

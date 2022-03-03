@@ -6,11 +6,16 @@
 #define LIVE_SIZE 145 // size of live object array
 #define MAX_LIVE_OBST 3 // max live obstacles
 
-#define FILLED 1
-#define EMPTY 0
+#define FILLED 1 // used to signify a live obstacle are is non empty
+#define EMPTY 0 // used to signify a live obstacle are is empty
 
 typedef enum {false, true} boolean;
 
+/**
+ * @brief keeps a check of the current live array
+ * obstacles properties
+ * 
+ */
 typedef struct Obstacle_Data {
     int filled_array_indexes[3];
     int obstacle_type_at_array_indexes[3];
@@ -18,6 +23,11 @@ typedef struct Obstacle_Data {
     int obst0_limit_value[3];
 } obstData;
 
+/**
+ * @brief keeps a check on properties of any current live
+ * obstacle of type 0
+ * 
+ */
 typedef struct Obstacle0_state {
     boolean boost_enabled;
     boolean boosted_once;
@@ -57,4 +67,4 @@ void reset_player ();
 
 void disassemble_obstacle (int index);
 
-void init_structs ();
+void init_obstacle_Data ();

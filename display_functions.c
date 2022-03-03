@@ -75,7 +75,7 @@ void display_init(void) {
 }
 
 /**
- * @brief Renders the data in display_buffer to OLED
+ * @brief Renders the data in display_buffer on the OLED
  * Each byte represents an 8 pixel column on a page
  * 
  */
@@ -84,11 +84,13 @@ void render (){
     int i, j;
     for (i = 0; i < PAGE_COUNT; i++){
         DISPLAY_CHANGE_TO_COMMAND_MODE;
-        spi_send_recv(0x22);
-        spi_send_recv(i);
+
+        spi_send_recv(0x22); // set page adress command
+        spi_send_recv(i); // setting page adress
         
-        spi_send_recv(0x00);
-        spi_send_recv(0x10);
+        spi_send_recv(0x00); // lower nibble of column start
+        spi_send_recv(0x10); // higher nibble of column start
+        // in this case column start = 0x00
         
         DISPLAY_CHANGE_TO_DATA_MODE;
 
@@ -227,6 +229,12 @@ void moveObjectPixels (int arr_index, int steps, char direction){
     }   
 }
 
+/**
+ * @brief moves all live obstacles in the live obstacles array
+ * 
+ * @param steps steps to move each obstacle
+ * @param direction direction to move each obstacle
+ */
 void moveLiveObjPixels (int steps, char direction){
     int * arr_p = obst_data.filled_array_indexes;
     int i;
@@ -237,7 +245,15 @@ void moveLiveObjPixels (int steps, char direction){
     }
 }
 
-void setFramePixel (int on_off,int row, int column){
+/**
+ * @brief similiar to setPixel except it has full coverage of the OLED
+ * This function sets the status of 1 pixel in the display buffer 
+ * 
+ * @param on_off set pixel to on or off, 0 or 1
+ * @param row the row of the pixel on the oled
+ * @param column set pixel to on or off, 0 or 1
+ */
+void setPixelFullCoverage (int on_off,int row, int column){
     if (row >= 32 || column >= 128) return;
     int page = row / 8;
     uint8_t row_byte = ((uint8_t)row) % 8;
@@ -252,7 +268,9 @@ void setFramePixel (int on_off,int row, int column){
 }
 
 /**
- * @brief This function sets the status of 1 pixel in the display buffer
+ * @brief This function sets the status of 1 pixel in the display buffer 
+ * function is limited to row coordinates [1, 30] and column coordinates
+ * [1,126] on the OLED
  * 
  * @param on_off set pixel to on or off, 0 or 1
  * @param row the row of the pixel on the oled
@@ -272,17 +290,27 @@ void setPixel (int on_off,int row, int column){
     }
 }
 
+/**
+ * @brief Sets the graphical frames pixels
+ * 
+ * @param ON_OFF on or off
+ */
 void set_frame_pixels (int ON_OFF){
     int i;
     for (i = 0; i < 316; i++){
-        setFramePixel(ON_OFF, frame[i][0], frame[i][1]);
+        setPixelFullCoverage(ON_OFF, frame[i][0], frame[i][1]);
     }
 }
 
+/**
+ * @brief Sets the pixels of the game introduction image
+ * 
+ * @param ON_OFF on or off
+ */
 void set_intro_pixels (int ON_OFF){
     int i;
     for (i = 0; i < 165; i++){
-        setFramePixel(ON_OFF, intro[i][0], intro[i][1]);
+        setPixelFullCoverage(ON_OFF, intro[i][0], intro[i][1]);
     }
 }
 
@@ -301,6 +329,11 @@ void setObjectPixels (int ON_OFF,int live_index){
     }
 }
 
+/**
+ * @brief Sets all live obstacles pixel coordinates on the display buffer
+ * 
+ * @param ON_OFF turn the pixels on or off
+ */
 void setLiveObstaclePixels (int ON_OFF){
     int * arr_p = obst_data.filled_array_indexes;
     int i;
@@ -316,7 +349,7 @@ void setLiveObstaclePixels (int ON_OFF){
  * 
  * @param row pixel row on OLED
  * @param column pixel column on OLED
- * @return int 
+ * @return int if 1 pixel is on, else off
  */
 int getPixel (int row, int column){
     int page = row / 8;

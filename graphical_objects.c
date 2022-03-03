@@ -6,6 +6,7 @@ void obst0_procedure();
 void obst1_procedure();
 void obst2_procedure ();
 
+// game launch intro image
 uint8_t intro[165][2] = 
 {{12,17},{13,17},{18,17},{19,17},{13,18},
 {14,18},{17,18},{18,18},{14,19},{15,19},
@@ -42,9 +43,7 @@ uint8_t intro[165][2] =
 {13,84},{17,84},{14,85},{15,85},{16,85}
 };
 
-
-
-
+// pixel coordinates of a rectangular frame 
 uint8_t frame[316][2] = {{0,0},{1,0},{2,0},{3,0},{4,0},
 {5,0},{6,0},{7,0},{8,0},{9,0},
 {10,0},{11,0},{12,0},{13,0},{14,0},
@@ -120,6 +119,7 @@ uint8_t player[32][2] = {{11,2},{12,2},{17,2},{18,2},{12,3},
 {12,11},{16,11},{12,12},{16,12},{13,13},
 {15,13},{14,14}};
 
+// Same as player pixel coordinates, this is used to reset player coordinates to initial state
 uint8_t player_pixel_reset [32][2] = {{11,2},{12,2},{17,2},{18,2},{12,3},
 {13,3},{16,3},{17,3},{13,4},{14,4},
 {15,4},{16,4},{13,5},{15,5},{12,6},
@@ -133,10 +133,12 @@ uint8_t player_pixel_reset [32][2] = {{11,2},{12,2},{17,2},{18,2},{12,3},
 uint8_t collision_sensors[9][2] = {{11,2},{18,2},{12,6},{16,6},{11,10},
 {17,10},{12,12},{16,12},{14,14}};
 
+// Same as collision sensor pixel coordinates, this is used to reset collision sensor to initial state
 uint8_t reset_collision_sensors[9][2] = {{11,2},{18,2},{12,6},{16,6},{11,10},
 {17,10},{12,12},{16,12},{14,14}};
 
-/** Below are non-live obstacle, these what any newly generated live
+
+/** Below are non-live obstacles, these are what any newly generated live
  *  obstacle are initialized as
 **/
 
@@ -170,7 +172,6 @@ uint8_t obst1lower[80][2] = {{29,129},{30,129},{31,129},{32,129},{33,129},
 {59,135},{60,135},{61,135},{62,135},{63,135}
 };
 
-
 uint8_t obst1upper[65][2] =
 {{0,129},{1,129},{2,129},{3,129},{4,129},
 {5,129},{6,129},{7,129},{8,129},{9,129},
@@ -202,7 +203,12 @@ uint8_t (*live_obstacles_pointer)[3][LIVE_SIZE][2] = &live_obstacles;
 
 obstData obst_data;
 obstacle0_state obstacle0_status;
-void init_structs (){
+
+/**
+ * @brief initializes obstData struct
+ * 
+ */
+void init_obstacle_Data (){
     int i;
     for (i = 0; i < 3; i++){
         obst_data.filled_array_indexes[i] = EMPTY;
@@ -212,6 +218,13 @@ void init_structs (){
     }
 }
 
+/**
+ * @brief checks wheter there is an obstacles of a certain type
+ * on the array of live obstacles
+ * 
+ * @param obstnr either 0, 1, or 2 for obst0, obst1, obst2
+ * @return int 1 if there is an obstacle of that type, else 0
+ */
 int is_there_obstX_live(int obstnr){
     int* is_filled_p = obst_data.filled_array_indexes;
     int* type_p = obst_data.obstacle_type_at_array_indexes;
@@ -226,6 +239,11 @@ int is_there_obstX_live(int obstnr){
     return 0;
 }
 
+/**
+ * @brief resets player pixel coordinates and collision coordinates to initial state
+ * this function is used when the player want to restart after death
+ * 
+ */
 void reset_player (){
     int i,j;
     for (i = 0; i < 32; i++){
@@ -240,6 +258,21 @@ void reset_player (){
     }
 }
 
+/**
+ * @brief updates the limit of up-down movement of obstacle types 0 and 2
+ * if the obstacle has reach top of OLED, limit is updated to 30
+ * indicating that it has reached the top and obstacle should not be moved up anymore
+ * 
+ * if it has reach bottom of oled, limit is update to 1
+ * indicating that it has reached the bottom and obstacle should not be moved down anymore
+ * 
+ * this function is used to make sure we do not lets obstacle coordinates get outside
+ * of the OLED
+ * 
+ * @param obstnr obst type to update limit of
+ * @param index the index at which obstacle lies in the live obstacles array
+ * @param limit the limit to set to, either 1 or 30
+ */
 void update_limit_obstX (int obstnr, int index, int limit){
     if (obstnr == 2){
         obst_data.obst2_limit_value[index] = limit;
@@ -249,6 +282,14 @@ void update_limit_obstX (int obstnr, int index, int limit){
     }
 }
 
+/**
+ * @brief Get the limit of obstX
+ * should only be used for obst types 0 and 2
+ * 
+ * @param obstnr obst type
+ * @param index the index at which obstacle lies in the live obstacles array
+ * @return int the value of the limit
+ */
 int get_limit_of_obstX (int obstnr, int index){
     if (obstnr == 2){
         return obst_data.obst2_limit_value[index];
@@ -256,6 +297,11 @@ int get_limit_of_obstX (int obstnr, int index){
     return obst_data.obst0_limit_value[index];
 }
 
+/**
+ * @brief returns the index of obst0 in the live obstacles array
+ * 
+ * @return int index in the array, if there is no obst0 in the array return -1
+ */
 int index_of_obst0 (){
     int* is_filled_p = obst_data.filled_array_indexes;
     int* type_p = obst_data.obstacle_type_at_array_indexes;
@@ -270,6 +316,13 @@ int index_of_obst0 (){
     return -1;
 }
 
+/**
+ * @brief This function move obstacle types 0 and 2 up or down
+ * 
+ * Should only be used for obstacle types 0 and 2
+ * 
+ * @param obstnr obst type to be moved
+ */
 void move_up_down_obstX (int obstnr){
     int limit_status;
     int* is_filled_p = obst_data.filled_array_indexes;
@@ -295,11 +348,11 @@ void move_up_down_obstX (int obstnr){
 }
 
 /**
- * @brief copies a non-live obstacle and puts it in live objects array
+ * @brief copies a non-live obstacle and puts it in live obstacles array
  * 
- * @param k index on live objects array to put in
- * @param rows number of (x,y) pixel coordinates of obstacle
- * @param obst_pointer points to array of pixel coordinates for the obstacle
+ * @param k index on live obstacles array to put in
+ * @param rows number of (x,y) pixel coordinates of obstacle 
+ * @param obst_pointer points to array of pixel coordinates of the obstacle
  */
 void put_obstacle_in_live (int k, int rows, uint8_t *obst_pointer){
     int cols = 2;
@@ -313,6 +366,11 @@ void put_obstacle_in_live (int k, int rows, uint8_t *obst_pointer){
     }
 }
 
+/**
+ * @brief returns index of an empty spot on live obstacles array
+ * 
+ * @return int index of empty spot, if live obstacles array is full it returns -1
+ */
 int getFreeIndex (){
     int* array_p = &obst_data.filled_array_indexes[0];
     int i;
@@ -325,6 +383,12 @@ int getFreeIndex (){
     return -1;
 }
 
+/**
+ * @brief this updates obst_data to mark that a index on the 
+ * live obstacles has been freed
+ * 
+ * @param index that is now empty
+ */
 void freeIndex (int index){
     obst_data.filled_array_indexes[index] = EMPTY;
     obst_data.obstacle_type_at_array_indexes[index] = -1;
@@ -332,7 +396,11 @@ void freeIndex (int index){
 
 /**
  * @brief Randomly picks an obstacle type to go live
+ * If there is no free spot on the live obstacles array no obstacle
+ * is generated
  * 
+ * if there is already an obstacles of type 0, no new 
+ * obstacle of that type is to be generated
  */
 void generate_obstacle (){
     int type;
@@ -371,8 +439,6 @@ void generate_obstacle (){
     default:
         break;
     }
-    
-   
 }
 
 /**
@@ -454,6 +520,9 @@ void init_live (){
  * The obstacles properties are randomly generated, such as the
  * length of its upper and lowers part, as well as the spacing between 
  * the two parts is randomly generated
+ * 
+ * the variables for random properties are dependent on the current score
+ * @param live_obst_index index on the live obstacle array to put obstacle in
  */
 void obst1_procedure (int live_obst_index){
     int obst1upper_size = 65;
@@ -505,6 +574,17 @@ void obst1_procedure (int live_obst_index){
     put_obstacle_in_live(live_obst_index,145, temparr[0]);
 }
 
+/**
+ * @brief procedure for generating obstacle 2
+ * 
+ * the length of the obstacle is randomly generated, but it is
+ * affected by current score
+ * 
+ * what happens here is that obstacle2 gets stretched out before it
+ * is put in the live obstacle array
+ * 
+ * @param live_obst_index index on the live obstacle array to put obstacle in
+ */
 void obst2_procedure (int live_obst_index){
     uint8_t temparr[80][2];
     int height_max_increase;
@@ -555,6 +635,19 @@ void obst2_procedure (int live_obst_index){
     put_obstacle_in_live(live_obst_index, nr_elements, temparr[0]);
 }
 
+/**
+ * @brief procedure for generating obstacle 0
+ * 
+ * certain properties of obstacle 0 are randomly set:
+ * how many pixel steps the obstacle should take while boosted
+ * how many pixel steps before boost is activated
+ * timer value to determine at what time intervals boost effect should be executed, basically speed of boost
+ * 
+ * the possible range the above random value can belong to is
+ * determined by the current score
+ * 
+ * @param live_obst_index index on the live obstacle array to put obstacle in
+ */
 void obst0_procedure (int live_obst_index){
     obstacle0_status.boost_enabled = false;
     obstacle0_status.boosted_once = false;
@@ -577,7 +670,7 @@ void obst0_procedure (int live_obst_index){
     obstacle0_status.boost_enable_steps = random_number_between (p[beMin], p[beMax]);
     obstacle0_status.boost_disable_steps = random_number_between (p[bdMin], p[bdMax]);
     obstacle0_status.timer_boost_enabled = random_number_between (p[tbMin], p[tbMax]);
-    //set_obst0_boost_delay(obstacle0_status.timer_boost_enabled);
+    
     obstacle0_status.iterator = 0;
 
     put_obstacle_in_live(live_obst_index, 47, obst0[0]);

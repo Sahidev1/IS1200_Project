@@ -7,7 +7,7 @@
 #define a 1103515245
 #define c 12345
 
-// Initializing seed value
+// Initializing seed values
 int seed = 345197; 
 int obstacle_gen_seed = 1719021017;
 
@@ -19,6 +19,14 @@ int abs (int val){
     return val;
 }
 
+/**
+ * @brief returns pseudorandom between [0, range - 1]
+ * has it's own seed
+ * is used only for obstacle generation
+ * 
+ * @param range 
+ * @return int the pseudorandom value
+ */
 int obstacle_gen_rand (int range){
     obstacle_gen_seed = (a*obstacle_gen_seed + c) % m;
     return abs (obstacle_gen_seed % range);

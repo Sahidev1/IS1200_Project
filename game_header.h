@@ -18,6 +18,10 @@
 
 typedef enum{DEAD, ALIVE} Player;
 
+/**
+ * @brief A struct the keeps track of the game state
+ * 
+ */
 typedef struct Game_state {
     int current_score;
     int gen_delay;
@@ -34,9 +38,6 @@ extern char textbuffer[4][16];
 extern const uint8_t const font[128*8];
 
 extern uint8_t display_buffer[BUFFER_SIZE]; // display buffer that is accessible by any c file in the program
-
-extern int obstacle_move_delay;
-extern int player_move_delay;
 
 uint8_t spi_send_recv(uint8_t data);
 

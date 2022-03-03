@@ -138,6 +138,14 @@ const uint8_t const font[] = {
 	0, 120, 68, 66, 68, 120, 0, 0,
 };
 
+/**
+ * @brief puts a string on the textbuffer
+ * 
+ * @param line which page on OLED
+ * @param s string to write
+ * 
+ * Code is taken from LAB3 files
+ */
 void display_string(int line, char *s) {
 	int i;
 	if(line < 0 || line >= 4)
@@ -153,6 +161,11 @@ void display_string(int line, char *s) {
 			textbuffer[line][i] = ' ';
 }
 
+/**
+ * @brief the textbuffer is rendered on the OLED
+ * 
+ * Code is taken from LAB3 files
+ */
 void display_update(void) {
 	int i, j, k;
 	int c;

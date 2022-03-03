@@ -1,6 +1,8 @@
 #include <pic32mx.h>
 #include <stdint.h>
 #include "game_header.h"
+
+// Below are delay counters
 int obstacle_move_delay;
 int player_move_delay;
 int generator_delay;
@@ -13,7 +15,7 @@ int obst0_count_up_to;
 /**
  * @brief Interuptions Service Routine that handles interrupts in
  * the program
- * 
+ * where there is an interrupt all delay counters are incremented
  */
 void user_isr(void){
     IFSCLR(0) = 0x100;
@@ -27,7 +29,7 @@ void user_isr(void){
 }
 
 /**
- * @brief initializes global delay variables
+ * @brief initializes all delay variables
  * 
  */
 void init_delays(){
@@ -40,11 +42,23 @@ void init_delays(){
     accurate_delay_val = 0;
 }
 
+/**
+ * @brief controls how fast obst0 boosts
+ * lower delay value ==> faster boost
+ * 
+ * @param ms delay value in milliseconds
+ */
 void set_obst0_boost_delay (int ms){
     obst0_count_up_to = ms;
     obst0_boost_delay = 0;
 }
 
+/**
+ * @brief checks if boost delay counter has reached
+ * enough counts to boost obst0
+ * 
+ * @return int 1 if true else 0
+ */
 int check_obst0_boost_delay (){
     if (obst0_boost_delay >= obst0_count_up_to){
         obst0_boost_delay = 0;
@@ -53,6 +67,14 @@ int check_obst0_boost_delay (){
     return 0;
 }
 
+/**
+ * @brief checks the up down movement delay for obst0
+ * if delay has been reached obst0 is moved up or down
+ * lower delay requirement ==> faster up down movement
+ * 
+ * @param ms delay in milliseconds
+ * @return int 1 if reached delay, else false
+ */
 int check_obst0_delay (int ms){
     if (obst0_up_down_delay >= ms){
         obst0_up_down_delay = 0;
@@ -61,6 +83,14 @@ int check_obst0_delay (int ms){
     return 0;
 }
 
+/**
+ * @brief checks the up down movement delay for obst2
+ * if delay has been reached obst2 is moved up or down
+ * lower delay requirement ==> faster up down movement
+ * 
+ * @param ms delay in milliseconds
+ * @return int 1 if reached delay, else false
+ */
 int check_obst2_delay (int ms){
     if (obst2_up_down_delay >= ms){
         obst2_up_down_delay = 0;
@@ -69,6 +99,14 @@ int check_obst2_delay (int ms){
     return 0;
 }
 
+/**
+ * @brief checks the obstacle generator delay
+ * if delay value has been reached then an obstacle 
+ * is to be generated
+ * 
+ * @param ms delay in milliseconds
+ * @return int int 1 if reached delay, else false
+ */
 int check_generator_delay (int ms){
     if (generator_delay >= ms){
         generator_delay = 0;
@@ -107,7 +145,7 @@ int check_obstacle_delay (int ms){
 }
 
 /**
- * @brief creats a millisecond accuracy delay
+ * @brief creats a millisecond accuracurate delay
  * 
  * @param ms milliseconds delay
  */
@@ -214,6 +252,8 @@ void Initialize_IO( void )
 /**
  * @brief A debugger that uses the IO shield LEDS
  * note that it display 8 least significant bits of val
+ * 
+ * can also be used to display the score
  * 
  * @param val 8 bit value to display
  */

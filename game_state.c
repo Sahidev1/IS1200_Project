@@ -5,6 +5,10 @@ game_state game_state_;
 int initial_up_down0, initial_up_down2, initial_live_delay;
 char score_string[14];
 
+/**
+ * @brief initializes game_state struct
+ * 
+ */
 void init_game_state (){
     game_state_.current_score = 0;
     game_state_.gen_delay = 5000;
@@ -19,7 +23,10 @@ void init_game_state (){
     initial_live_delay = game_state_.live_obstacle_delay;
 }
 
-
+/**
+ * @brief updates game_state parameters based on the score
+ * 
+ */
 void update_game_params (){
     int score = game_state_.current_score;
     int gen_delay = game_state_.gen_delay;
@@ -28,13 +35,13 @@ void update_game_params (){
     int live_delay = game_state_.live_obstacle_delay;
 
     if (gen_delay > 4000){
-        game_state_.gen_delay -= 100;
+        game_state_.gen_delay -= 150;
     }
     if (gen_delay <= 4000 && gen_delay > 3000){
-        game_state_.gen_delay -= 50;
+        game_state_.gen_delay -= 75;
     }
     if (gen_delay <= 3000 && gen_delay > 1500){
-        game_state_.gen_delay -= 25;
+        game_state_.gen_delay -= 50;
     }
 
     if (up_down0 > 90){
@@ -61,11 +68,22 @@ void update_game_params (){
     }
 }
 
+/**
+ * @brief This function is called to increase the score
+ * this function calls update_game_params
+ * 
+ */
 void increase_score (){
     game_state_.current_score++;
     update_game_params();
 }
 
+/**
+ * @brief This function returns a string representation of the current score
+ * 
+ * @param score current score
+ * @return char* string with current score
+ */
 char* score_string_gen (int score){
     score_string[0] = 'S';
     score_string[1] = 'c';
@@ -80,7 +98,6 @@ char* score_string_gen (int score){
     }
 
     int i = 7;
-    //LED_debugger(score);
     if (score > 0){
         int temparr[5] = {-1,-1,-1,-1,-1};
         int nr_digits = 0;
