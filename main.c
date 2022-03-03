@@ -69,7 +69,8 @@ int main() {
     init_delays();
     init_game_state();
     set_frame_pixels(ON);
-    while (1){
+
+    while (game_state_.player){
         btn_stat = getbtns();
         direction = read_direction(btn_stat);
         if (check_generator_delay(game_state_.gen_delay)){
@@ -134,7 +135,7 @@ int main() {
             movePlayerPixels (steps, 32, direction, player[0]);
             movePlayerPixels (steps, 9, direction, collision_sensors[0]);
         }
-        //if (collision_check()) break;
+        if (collision_check()) game_state_.player = DEAD;
     }
     
     while(1);

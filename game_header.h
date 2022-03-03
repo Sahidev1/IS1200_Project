@@ -16,12 +16,15 @@
 #define OFF 0
 #define ON 1
 
+typedef enum{DEAD, ALIVE} Player;
+
 typedef struct Game_state {
     int current_score;
     int gen_delay;
     int obst2_up_down_delay;
     int obst0_up_down_delay;
     int live_obstacle_delay;
+    Player player;
 }game_state;
 
 extern game_state game_state_;

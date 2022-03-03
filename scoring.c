@@ -11,6 +11,8 @@ void init_game_state (){
     game_state_.obst2_up_down_delay = 100;
     game_state_.live_obstacle_delay = 50;
 
+    game_state_.player = ALIVE;
+
     initial_up_down0 = game_state_.obst0_up_down_delay;
     initial_up_down2 = game_state_.obst2_up_down_delay;
     initial_live_delay = game_state_.live_obstacle_delay;
@@ -30,7 +32,7 @@ void update_game_params (){
     if (gen_delay <= 4000 && gen_delay > 3000){
         game_state_.gen_delay -= 50;
     }
-    if (gen_delay <= 3000 && gen_delay > 1600){
+    if (gen_delay <= 3000 && gen_delay > 1500){
         game_state_.gen_delay -= 25;
     }
 
