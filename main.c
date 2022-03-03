@@ -6,8 +6,6 @@ char textbuffer[4][16];
 uint8_t display_buffer[BUFFER_SIZE];
 int btn_stat = 0;
 
-
-
 int main() {
     /*
 	  This will set the peripheral bus clock to the same frequency
@@ -63,37 +61,44 @@ int main() {
     
     int delay;
 
+    game_state_.current_score = 0;
+    
+
     int flag = 0;
     init_live();
     init_delays();
+    init_game_state();
     set_frame_pixels(ON);
     while (1){
         btn_stat = getbtns();
         direction = read_direction(btn_stat);
-        if (check_generator_delay(3200)){
+        if (check_generator_delay(game_state_.gen_delay)){
             generate_obstacle();
         }
+        LED_debugger (game_state_.current_score);
         
         setPlayerPixels(ON, 32,player[0]);
         setLiveObstaclePixels(ON);
        
-        
         render();
 
         setPlayerPixels(OFF, 32, player[0]);
         setLiveObstaclePixels(OFF);
        
         
-        if (check_obst2_delay(100)){
+        if (check_obst2_delay(game_state_.obst2_up_down_delay)){
             if (is_there_obstX_live(2)){
                 move_up_down_obstX(2);
             }
+        }
+
+        if (check_obst0_delay(game_state_.obst2_up_down_delay)){
             if (is_there_obstX_live(0) && !obstacle0_status.boost_enabled){
                 move_up_down_obstX(0);
             }
         }
         
-        int obst_delay = check_obstacle_delay(50);
+        int obst_delay = check_obstacle_delay(game_state_.live_obstacle_delay);
         if (obst_delay){
             moveLiveObjPixels(1, LEFT);
             if (is_there_obstX_live(0) && !obstacle0_status.boost_enabled){
@@ -129,7 +134,7 @@ int main() {
             movePlayerPixels (steps, 32, direction, player[0]);
             movePlayerPixels (steps, 9, direction, collision_sensors[0]);
         }
-        if (collision_check()) break;
+        //if (collision_check()) break;
     }
     
     while(1);

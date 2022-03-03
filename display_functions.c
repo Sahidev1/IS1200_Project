@@ -222,6 +222,7 @@ void moveObjectPixels (int arr_index, int steps, char direction){
         break;
     }
     if (direction == LEFT && out_of_display_flag){
+        increase_score();
         disassemble_obstacle(k);
     }   
 }

@@ -16,6 +16,15 @@
 #define OFF 0
 #define ON 1
 
+typedef struct Game_state {
+    int current_score;
+    int gen_delay;
+    int obst2_up_down_delay;
+    int obst0_up_down_delay;
+    int live_obstacle_delay;
+}game_state;
+
+extern game_state game_state_;
 
 /* Display related */
 extern char textbuffer[4][16];
@@ -78,7 +87,13 @@ void set_obst0_boost_delay (int ms);
 
 int check_obst0_boost_delay ();
 
+int check_obst0_delay (int ms);
+
 char read_direction (int btn_stat);
+
+/* game state */
+void init_game_state ();
+void increase_score();
 
 
 /* utility/helper functions */

@@ -395,11 +395,15 @@ void obst1_procedure (int live_obst_index){
     int obst1upper_size = 65;
     int obst1lower_size = 80;
     int combined_size = 145;
+    int min_spacing;
+    if (game_state_.current_score < 10) min_spacing = 12;
+    else if (game_state_.current_score >= 10 && game_state_.current_score < 40) min_spacing = 10;
+    else min_spacing = 9;
 
     uint8_t temparr[combined_size][2];
     uint8_t steps_lower = (uint8_t)random_number(10);
     uint8_t height_up = steps_lower + 6;
-    uint8_t space_beetween = (uint8_t) random_number_between (10, 14);
+    uint8_t space_beetween = (uint8_t) random_number_between (min_spacing, 14);
     uint8_t height_down = ROWS - space_beetween - height_up;
     uint8_t steps_upper = ROWS - height_down;
 
@@ -439,8 +443,18 @@ void obst1_procedure (int live_obst_index){
 
 void obst2_procedure (int live_obst_index){
     uint8_t temparr[80][2];
-    int height_increase = random_number(11);
-    //random_number(3);
+    int height_max_increase;
+    if (game_state_.current_score < 10){
+        height_max_increase = 8;
+    }
+    else if (game_state_.current_score >= 10 && game_state_.current_score < 40){
+        height_max_increase = 11;
+    }
+    else {
+        height_max_increase = 12;
+    }
+    int height_increase = random_number(height_max_increase);
+    
     int nr_elements = 20;
     int i,j,k;
 
@@ -480,9 +494,25 @@ void obst2_procedure (int live_obst_index){
 void obst0_procedure (int live_obst_index){
     obstacle0_status.boost_enabled = false;
     obstacle0_status.boosted_once = false;
-    obstacle0_status.boost_enable_steps = random_number_between (20, 50);
-    obstacle0_status.boost_disable_steps = random_number_between (25, 75);
-    obstacle0_status.timer_boost_enabled = random_number_between (15, 50);
+    int* p;
+    enum {beMin, beMax, bdMin, bdMax, tbMin, tbMax};
+
+    if (game_state_.current_score < 10){
+        int arr[6] = {20, 40, 20, 60, 25, 60};
+        p = arr;
+    }
+    else if (game_state_.current_score >= 10 && game_state_.current_score < 40){
+        int arr[6] = {20, 40, 25, 70, 15, 50};
+        p = arr;
+    }
+    else {
+        int arr[6] = {20, 45, 25, 80, 10, 30};
+        p = arr;
+    }
+    
+    obstacle0_status.boost_enable_steps = random_number_between (p[beMin], p[beMax]);
+    obstacle0_status.boost_disable_steps = random_number_between (p[bdMin], p[bdMax]);
+    obstacle0_status.timer_boost_enabled = random_number_between (p[tbMin], p[tbMax]);
     //set_obst0_boost_delay(obstacle0_status.timer_boost_enabled);
     obstacle0_status.iterator = 0;
 
