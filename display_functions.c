@@ -279,6 +279,13 @@ void set_frame_pixels (int ON_OFF){
     }
 }
 
+void set_intro_pixels (int ON_OFF){
+    int i;
+    for (i = 0; i < 573; i++){
+        setFramePixel(ON_OFF, intro[i][0], intro[i][1]);
+    }
+}
+
 /**
  * @brief Puts an objects pixel coordinates on the display buffer
  * 
