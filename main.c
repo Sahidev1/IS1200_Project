@@ -60,13 +60,14 @@ int main() {
     boolean first_run = true;
     boolean restart = false;
 
-    init_live();
-    init_delays();
-    init_game_state();
-    init_obstacle_Data();
-    set_frame_pixels(ON);
+    init_live(); // initialize live obstacles array
+    init_delays(); // initlize delay variables
+    init_game_state(); // initialize game_State struct
+    init_obstacle_Data(); // initialize obstacle_data struct
+    set_frame_pixels(ON); // turn on frame pixels
 
     while(true){
+        //if first run show intro image
         if (first_run){
             set_intro_pixels(ON);
             render ();
@@ -75,7 +76,8 @@ int main() {
             render (); 
             first_run = false; 
         }
-       
+
+        // if restart, reinitialize
         if (restart){
             init_live();
             init_delays();
@@ -84,6 +86,7 @@ int main() {
             set_frame_pixels(ON);
         }
 
+        // while player is alive
         while (game_state_.player_status){
             btn_stat = getbtns();
             direction = read_direction(btn_stat);
@@ -91,20 +94,25 @@ int main() {
                 generate_obstacle();
             }
             
+            // set player and obstacles in the displaybuffer
             setPlayerPixels(ON, 32,player[0]);
             setLiveObstaclePixels(ON);
-        
+
+            // render display buffer
             render();
 
+            // remove player and obstacles from the displaybuffer
             setPlayerPixels(OFF, 32, player[0]);
             setLiveObstaclePixels(OFF);
         
+            // should obstacle of type 2 be moved up/down 
             if (check_obst2_delay(game_state_.obst2_up_down_delay)){
                 if (is_there_obstX_live(2)){
                     move_up_down_obstX(2);
                 }
             }
 
+            // should obstacle of type 0 be moved up/down 
             if (check_obst0_delay(game_state_.obst2_up_down_delay)){
                 if (is_there_obstX_live(0) && !obstacle0_status.boost_enabled){
                     move_up_down_obstX(0);
@@ -112,13 +120,18 @@ int main() {
             }
             
             int obst_delay = check_obstacle_delay(game_state_.live_obstacle_delay);
+
+            // increment obst0 boost-disabled step counter
             if (obst_delay){
+                // move all obstacles a step to the left
                 moveLiveObjPixels(1, LEFT);
+
                 if (is_there_obstX_live(0) && !obstacle0_status.boost_enabled){
                     obstacle0_status.iterator++;
                 }
             }
 
+            // update obst0 status
             if (is_there_obstX_live(0) && obst_delay){
                 if (!obstacle0_status.boost_enabled && !obstacle0_status.boosted_once){
                     if (obstacle0_status.iterator >= obstacle0_status.boost_disable_steps){
@@ -138,25 +151,31 @@ int main() {
 
             boolean part1 = is_there_obstX_live(0) && !obstacle0_status.boosted_once;
             boolean part2 = obstacle0_status.boost_enabled && check_obst0_boost_delay();
+
+            // if boost is enabled, boosts obst0
             if (part1 && part2){
                 int index = index_of_obst0();
                 moveObjectPixels (index,1, LEFT);
                 obstacle0_status.iterator++;
             }
             
+            // update player pixel position depending on button inputs
             if (btn_stat && check_player_delay(20)){
                 movePlayerPixels (steps, 32, direction, player[0]);
                 movePlayerPixels (steps, 9, direction, collision_sensors[0]);
             }
             
+            // check for colision between play and obstacle
             if (collision_check()){ 
                 game_state_.player_status = DEAD;
                 break;
             }
             
-            LED_debugger(game_state_.current_score); // Used here to display score on LEDS
+            // Used here to display score on LEDS
+            LED_debugger(game_state_.current_score);
         }
 
+        // if player dead display score until player flips a switch
         if (!game_state_.player_status){
             accurate_delay (500);
             clearDisplay();
