@@ -172,8 +172,6 @@ void display_update(void);
 
 /* IO/Interrupt related */
 
-extern int btn_stat;
-
 /**
     This function initializes the LEDs, Button, switches and timer 2
     Code is taken from LAB 3

@@ -3,7 +3,7 @@
 #include "graphical_objects.h"
 
 uint8_t display_buffer[BUFFER_SIZE];
-int btn_stat = 0;
+
 
 int main() {
     /*
@@ -55,7 +55,6 @@ int main() {
     int steps = 1;
     int btn_stat;
     int switch_stat = 0;
-    int delay;
     
     boolean first_run = true;
     boolean restart = false;
