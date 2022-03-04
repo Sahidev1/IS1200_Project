@@ -159,7 +159,7 @@ int main() {
             }
             
             // update player pixel position depending on button inputs
-            if (btn_stat && check_player_delay(20)){
+            if (direction && check_player_delay(20)){
                 movePlayerPixels (steps, 32, direction, player[0]);
                 movePlayerPixels (steps, 9, direction, collision_sensors[0]);
             }
